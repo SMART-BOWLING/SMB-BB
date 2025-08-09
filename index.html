@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SMB BB</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -84,10 +85,18 @@
       color: white;
       transition: background 0.3s;
       user-select: none;
+      display: flex;
+      align-items: center;
     }
 
     .dropdown a:hover {
       background-color: #374151;
+    }
+
+    .icon-space {
+      margin-right: 8px;
+      width: 20px;
+      text-align: center;
     }
 
    .task-summary-card {
@@ -95,7 +104,7 @@
       justify-content: space-between;
       align-items: center;
       background-color: #fff;
-      color: №000;
+      color: #000;
       font-weight: 700;
       font-size: 16px;
       padding: 12px 16px;
@@ -206,7 +215,9 @@
       max-width: 48%;
       padding: 8px 10px;
       text-align: center;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     tbody tr > td:last-child .buttons-row span.sent-text {
@@ -216,7 +227,9 @@
       font-weight: 700;
       color: #444;
       text-align: center;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .schema-button {
@@ -229,7 +242,9 @@
       cursor: pointer;
       font-size: 13px;
       text-decoration: none;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     button {
@@ -272,6 +287,12 @@
       background-color: #dc143c !important;
       color: white !important;
     }
+    
+    .schema-button i,
+    .sent-text i,
+    button i {
+      margin-right: 6px;
+    }
   </style>
 </head>
 <body>
@@ -282,9 +303,15 @@
       <div></div><div></div><div></div>
     </div>
     <div class="dropdown" id="dropdownMenu">
-      <a href="https://bowlingblockb.github.io/PARTS/">ДЕТАЛИ</a>
-      <a href="#">...</a>
-      <a href="#">...</a>
+      <a href="https://bowlingblockb.github.io/PARTS/">
+        <i class="fas fa-cog icon-space"></i>ДЕТАЛИ
+      </a>
+      <a href="#">
+        <i class="fas fa-search icon-space"></i>...
+      </a>
+      <a href="#">
+        <i class="fas fa-user icon-space"></i>...
+      </a>
     </div>
   </header>
 
@@ -310,9 +337,9 @@
     </table>
 
     <div class="pagination">
-      <button onclick="prevPage()" id="prevBtn" disabled>← Назад</button>
+      <button onclick="prevPage()" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Назад</button>
       <div id="pageNumbers" style="display: flex; gap: 15px;"></div>
-      <button onclick="nextPage()" id="nextBtn">Вперёд →</button>
+      <button onclick="nextPage()" id="nextBtn">Вперёд <i class="fas fa-arrow-right"></i></button>
     </div>
   </div>
 
@@ -387,11 +414,17 @@
       pageData.forEach((row) => {
         const tr = document.createElement("tr");
         const schemaLink = row[2]
-          ? `<a href="${row[2]}" target="_blank" class="schema-button">Открыть</a>`
+          ? `<a href="${row[2]}" target="_blank" class="schema-button">
+               <i class="fas fa-file-alt"></i>Открыть
+             </a>`
           : "";
 
         tr.innerHTML = `
-          <td data-label="ЗАДАЧА">${schemaLink ? `<button class="schema-button">Открыть</button>` : "Нет схемы"}</td>
+          <td data-label="ЗАДАЧА">${row[2] ? `
+            <a href="${row[2]}" target="_blank" class="schema-button">
+              <i class="fas fa-file-alt"></i>Открыть
+            </a>` : "Нет схемы"}
+          </td>
           <td data-label="МАШИНА">${row[1]}</td>
           <td data-label="ОТКРЫТА">${row[3]}</td>
           <td data-label="ЗАКРЫТА">${row[4]}</td>
@@ -417,8 +450,10 @@
             <div class="buttons-row">
               ${schemaLink}
               ${row[5] && row[6]
-                ? `<span class="sent-text">Отправлено</span>`
-                : `<button id="btn_${row[0]}" onclick="validateAndSend(${row[0]});">Отправить</button>`}
+                ? `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`
+                : `<button id="btn_${row[0]}" onclick="validateAndSend(${row[0]});">
+                     <i class="fas fa-paper-plane"></i>Отправить
+                   </button>`}
             </div>
           </td>`;
         tableBody.appendChild(tr);
@@ -441,7 +476,7 @@
       }
 
       updateSheet(rowNumber, gSelect.value, iSelect.value);
-      btn.outerHTML = `<span class="sent-text">Отправлено</span>`;
+      btn.outerHTML = `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`;
     }
 
     function startColumnSearch(columnIndex) {
