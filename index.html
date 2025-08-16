@@ -287,6 +287,10 @@
       background-color: #1a2f40;
     }
 
+    .pagination > button {
+      border-radius: 6px; /* Закругленные края для кнопок "Вперед" и "Назад" */
+    }
+
     .highlight {
       background-color: #dc143c !important;
       color: white !important;
@@ -572,6 +576,7 @@
         btn.onclick = () => {
           currentPage = i;
           renderPage(currentPage);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         pageContainer.appendChild(btn);
       }
@@ -581,6 +586,7 @@
       if (currentPage > 1) {
         currentPage--;
         renderPage(currentPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
@@ -588,6 +594,7 @@
       if (currentPage * rowsPerPage < fullData.length) {
         currentPage++;
         renderPage(currentPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
