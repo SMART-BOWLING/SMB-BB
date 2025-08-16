@@ -95,7 +95,7 @@
     }
 
     .icon-space {
-      margin-right: 6px; /* Увеличен отступ между иконкой и текстом */
+      margin-right: 6px;
       width: 20px;
       text-align: center;
       font-size: 16px;
@@ -220,7 +220,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px; /* Добавлены закругленные края для кнопки Отправить */
+      border-radius: 4px;
     }
 
     tbody tr > td:last-child .buttons-row span.sent-text {
@@ -256,13 +256,14 @@
       border: none;
       cursor: pointer;
       user-select: none;
-      border-radius: 4px; /* Добавлены закругленные края для кнопки Отправить */
+      border-radius: 4px;
     }
 
     button:hover {
       background-color: #a90e2e;
     }
 
+    /* Обновленные стили пагинации */
     .pagination {
       display: flex;
       justify-content: center;
@@ -273,22 +274,67 @@
       user-select: none;
     }
 
-    #pageNumbers button {
-      background-color: #dc143c;
+    .pagination button {
+      background: linear-gradient(to bottom, #1f2937, #0d1520);
       color: white;
       font-weight: 700;
       border: none;
       border-radius: 6px;
       padding: 6px 12px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    #pageNumbers button.active {
-      background-color: #1a2f40;
+    .pagination button:hover:not(:disabled) {
+      background: linear-gradient(to bottom, #2a3648, #111b29);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
 
-    .pagination > button {
-      border-radius: 6px; /* Закругленные края для кнопок "Вперед" и "Назад" */
+    .pagination button:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .pagination button:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .page-numbers button {
+      background: linear-gradient(to bottom, #dc143c, #b01030);
+      color: white;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .page-numbers button:hover {
+      background: linear-gradient(to bottom, #e51c47, #c01238);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    .page-numbers button.active {
+      background: linear-gradient(to bottom, #1f2937, #0d1520);
+      transform: scale(1.05);
     }
 
     .highlight {
@@ -302,7 +348,6 @@
       margin-right: 6px;
     }
 
-    /* Стили для индикатора загрузки (уменьшен в 2 раза) */
     .loader-container {
       position: fixed;
       top: 0;
@@ -317,10 +362,10 @@
     }
 
     .loader {
-      width: 25px; /* Уменьшен в 2 раза (было 50px) */
-      height: 25px; /* Уменьшен в 2 раза (было 50px) */
-      border: 3px solid #f3f3f3; /* Уменьшен в 2 раза (было 5px) */
-      border-top: 3px solid #dc143c; /* Уменьшен в 2 раза (было 5px) */
+      width: 25px;
+      height: 25px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #dc143c;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -332,7 +377,6 @@
   </style>
 </head>
 <body>
-  <!-- Индикатор загрузки (уменьшенный) -->
   <div id="loader" class="loader-container" style="display: none;">
     <div class="loader"></div>
   </div>
@@ -376,7 +420,7 @@
 
     <div class="pagination">
       <button onclick="prevPage()" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Назад</button>
-      <div id="pageNumbers" style="display: flex; gap: 15px;"></div>
+      <div class="page-numbers" id="pageNumbers"></div>
       <button onclick="nextPage()" id="nextBtn">Вперёд <i class="fas fa-arrow-right"></i></button>
     </div>
   </div>
