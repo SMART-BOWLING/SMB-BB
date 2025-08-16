@@ -143,6 +143,7 @@
       border-radius: 0;
       box-shadow: none;
       overflow-x: auto;
+      display: none;
     }
 
     table, thead, tbody, th, td, tr {
@@ -279,7 +280,6 @@
       background-color: #a90e2e;
     }
 
-    /* Обновленные стили пагинации */
     .pagination {
       display: flex;
       justify-content: center;
@@ -399,7 +399,7 @@
          data-client_id="328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com" 
          data-callback="handleCredentialResponse" 
          data-auto_prompt="false"></div>
-    <div class="g_id_signin" data-type="standard"></div>
+    <div class="g_id_signin" data-type="standard" data-theme="filled_blue"></div>
   </div>
 
   <div id="loader" class="loader-container" style="display: none;">
@@ -422,12 +422,12 @@
     </div>
   </header>
 
-  <div class="task-summary-card">
+  <div class="task-summary-card" style="display: none;">
     <div>Открытых задач</div>
     <div id="openTaskCount">0</div>
   </div>
 
-  <div id="app-content" style="display:none;">
+  <div id="app-content">
     <table>
       <thead>
         <tr>
@@ -467,22 +467,34 @@
         const email = data.email;
         if (allowedEmails.includes(email)) {
           localStorage.setItem("userEmail", email);
-          location.reload();
+          document.getElementById("login").style.display = "none";
+          document.getElementById("app-content").style.display = "block";
+          document.querySelector(".task-summary-card").style.display = "flex";
+          loadSheetData();
         } else {
           alert("Доступ запрещён для: " + email);
+          localStorage.removeItem("userEmail");
         }
+      } catch (e) {
+        console.error("Ошибка авторизации:", e);
+        alert("Произошла ошибка при авторизации");
       } finally {
         showLoader(false);
       }
     }
 
     function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join('');
-      return JSON.parse(jsonPayload);
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('');
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("Ошибка разбора JWT:", e);
+        return {};
+      }
     }
 
     window.onload = function() {
@@ -490,9 +502,11 @@
       if (userEmail && allowedEmails.includes(userEmail)) {
         document.getElementById("login").style.display = "none";
         document.getElementById("app-content").style.display = "block";
+        document.querySelector(".task-summary-card").style.display = "flex";
         loadSheetData();
       } else {
         document.getElementById("login").style.display = "flex";
+        localStorage.removeItem("userEmail");
       }
     };
 
