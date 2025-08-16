@@ -95,7 +95,7 @@
     }
 
     .icon-space {
-      margin-right: 8px;
+      margin-right: 12px; /* Увеличен отступ между иконкой и текстом */
       width: 20px;
       text-align: center;
     }
@@ -219,6 +219,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      border-radius: 4px; /* Добавлены закругленные края для кнопки Отправить */
     }
 
     tbody tr > td:last-child .buttons-row span.sent-text {
@@ -254,6 +255,7 @@
       border: none;
       cursor: pointer;
       user-select: none;
+      border-radius: 4px; /* Добавлены закругленные края для кнопки Отправить */
     }
 
     button:hover {
@@ -295,7 +297,7 @@
       margin-right: 6px;
     }
 
-    /* Стили для индикатора загрузки */
+    /* Стили для индикатора загрузки (уменьшен в 2 раза) */
     .loader-container {
       position: fixed;
       top: 0;
@@ -310,10 +312,10 @@
     }
 
     .loader {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #dc143c;
+      width: 25px; /* Уменьшен в 2 раза (было 50px) */
+      height: 25px; /* Уменьшен в 2 раза (было 50px) */
+      border: 3px solid #f3f3f3; /* Уменьшен в 2 раза (было 5px) */
+      border-top: 3px solid #dc143c; /* Уменьшен в 2 раза (было 5px) */
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -325,7 +327,7 @@
   </style>
 </head>
 <body>
-  <!-- Индикатор загрузки -->
+  <!-- Индикатор загрузки (уменьшенный) -->
   <div id="loader" class="loader-container" style="display: none;">
     <div class="loader"></div>
   </div>
@@ -338,10 +340,10 @@
     </div>
     <div class="dropdown" id="dropdownMenu">
       <a href="https://bowlingblockb.github.io/PARTS/">
-        <i class="fas fa-cube"></i> ДЕТАЛИ
+        <span class="icon-space"><i class="fas fa-cube"></i></span>ДЕТАЛИ
       </a>
       <a href="https://docs.google.com/spreadsheets/d/1ZQUBD4jX7x3BLEMHj0CYSYZrr_2Zjq-_C5pYO8IFPnA/edit?usp=sharing">
-        <i class="fas fa-exclamation-triangle"></i> СБОИ PS
+        <span class="icon-space"><i class="fas fa-exclamation-triangle"></i></span>СБОИ PS
       </a>
     </div>
   </header>
