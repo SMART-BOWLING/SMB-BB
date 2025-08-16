@@ -6,8 +6,24 @@
   <title>SMB BB</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/dtSpKx0W/1.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    #login {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      padding: 20px;
+    }
 
     body, html {
       margin: 0;
@@ -377,6 +393,16 @@
   </style>
 </head>
 <body>
+  <div id="login">
+    <h2>Вход на сайт</h2>
+    <div id="g_id_onload"
+         data-client_id="328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+  </div>
+
   <div id="loader" class="loader-container" style="display: none;">
     <div class="loader"></div>
   </div>
@@ -427,12 +453,49 @@
 
   <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec';
+    const allowedEmails = ["vadiksss900@gmail.com", "sergey99belov@gmail.com"];
 
     let fullData = [];
     let currentPage = 1;
     const rowsPerPage = 20;
     let activeSearchColumn = null;
     let activeSearchText = "";
+
+    function handleCredentialResponse(response) {
+      showLoader(true);
+      try {
+        const data = parseJwt(response.credential);
+        const email = data.email;
+        if (allowedEmails.includes(email)) {
+          localStorage.setItem("userEmail", email);
+          location.reload();
+        } else {
+          alert("Доступ запрещён для: " + email);
+        }
+      } finally {
+        showLoader(false);
+      }
+    }
+
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join('');
+      return JSON.parse(jsonPayload);
+    }
+
+    window.onload = function() {
+      const userEmail = localStorage.getItem("userEmail");
+      if (userEmail && allowedEmails.includes(userEmail)) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("app-content").style.display = "block";
+        loadSheetData();
+      } else {
+        document.getElementById("login").style.display = "flex";
+      }
+    };
 
     function toggleDropdown() {
       const menu = document.getElementById("dropdownMenu");
@@ -446,11 +509,6 @@
     function hideLoader() {
       document.getElementById("loader").style.display = "none";
     }
-
-    window.onload = function () {
-      document.getElementById("app-content").style.display = "block";
-      loadSheetData();
-    };
 
     async function loadSheetData() {
       showLoader();
