@@ -6,7 +6,6 @@
   <title>SMB BB</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/dtSpKx0W/1.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -23,6 +22,29 @@
       align-items: center;
       z-index: 10000;
       padding: 20px;
+      gap: 20px;
+    }
+
+    .google-btn {
+      background: #4285F4;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .google-btn:hover {
+      background: #3367D6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
     body, html {
@@ -143,7 +165,6 @@
       border-radius: 0;
       box-shadow: none;
       overflow-x: auto;
-      display: none;
     }
 
     table, thead, tbody, th, td, tr {
@@ -395,11 +416,9 @@
 <body>
   <div id="login">
     <h2>Вход на сайт</h2>
-    <div id="g_id_onload" 
-         data-client_id="328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com" 
-         data-callback="handleCredentialResponse" 
-         data-auto_prompt="false"></div>
-    <div class="g_id_signin" data-type="standard" data-theme="filled_blue"></div>
+    <button class="google-btn" onclick="googleAuth()">
+      <i class="fab fa-google"></i> Войти через Google
+    </button>
   </div>
 
   <div id="loader" class="loader-container" style="display: none;">
@@ -422,12 +441,12 @@
     </div>
   </header>
 
-  <div class="task-summary-card" style="display: none;">
+  <div class="task-summary-card">
     <div>Открытых задач</div>
     <div id="openTaskCount">0</div>
   </div>
 
-  <div id="app-content">
+  <div id="app-content" style="display:none;">
     <table>
       <thead>
         <tr>
@@ -460,67 +479,85 @@
     let activeSearchColumn = null;
     let activeSearchText = "";
 
-    function handleCredentialResponse(response) {
-      showLoader(true);
-      try {
-        const data = parseJwt(response.credential);
-        const email = data.email;
-        if (allowedEmails.includes(email)) {
-          localStorage.setItem("userEmail", email);
-          document.getElementById("login").style.display = "none";
-          document.getElementById("app-content").style.display = "block";
-          document.querySelector(".task-summary-card").style.display = "flex";
-          loadSheetData();
-        } else {
-          alert("Доступ запрещён для: " + email);
-          localStorage.removeItem("userEmail");
-        }
-      } catch (e) {
-        console.error("Ошибка авторизации:", e);
-        alert("Произошла ошибка при авторизации");
-      } finally {
-        showLoader(false);
+    // Проверяем авторизацию при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      
+      // Проверяем параметры URL после возврата с OAuth
+      if (window.location.hash) {
+        processAuthResponse();
       }
-    }
+    });
 
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join('');
-        return JSON.parse(jsonPayload);
-      } catch (e) {
-        console.error("Ошибка разбора JWT:", e);
-        return {};
-      }
-    }
-
-    window.onload = function() {
-      const userEmail = localStorage.getItem("userEmail");
+    function checkAuth() {
+      const userEmail = localStorage.getItem('userEmail');
       if (userEmail && allowedEmails.includes(userEmail)) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("app-content").style.display = "block";
-        document.querySelector(".task-summary-card").style.display = "flex";
+        // Пользователь авторизован
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('app-content').style.display = 'block';
         loadSheetData();
       } else {
-        document.getElementById("login").style.display = "flex";
-        localStorage.removeItem("userEmail");
+        // Показываем форму входа
+        document.getElementById('login').style.display = 'flex';
       }
-    };
+    }
+
+    function googleAuth() {
+      const clientId = '328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com';
+      const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
+      const scope = encodeURIComponent('email profile');
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+      
+      // Открываем окно аутентификации
+      window.open(authUrl, 'GoogleAuth', 'width=500,height=600');
+    }
+
+    function processAuthResponse() {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get('access_token');
+      
+      if (accessToken) {
+        showLoader();
+        
+        // Получаем данные пользователя
+        fetch('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + accessToken)
+          .then(response => response.json())
+          .then(data => {
+            if (data.email && allowedEmails.includes(data.email)) {
+              localStorage.setItem('userEmail', data.email);
+              // Убираем hash из URL
+              window.location.href = window.location.origin + window.location.pathname;
+            } else {
+              alert('Доступ запрещен для: ' + data.email);
+              localStorage.removeItem('userEmail');
+            }
+          })
+          .catch(error => {
+            console.error('Ошибка получения данных:', error);
+            alert('Ошибка авторизации');
+          })
+          .finally(() => {
+            hideLoader();
+          });
+      }
+    }
 
     function toggleDropdown() {
       const menu = document.getElementById("dropdownMenu");
       menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
     }
 
-    function showLoader(show) {
-      document.getElementById("loader").style.display = show ? "flex" : "none";
+    function showLoader() {
+      document.getElementById("loader").style.display = "flex";
+    }
+
+    function hideLoader() {
+      document.getElementById("loader").style.display = "none";
     }
 
     async function loadSheetData() {
-      showLoader(true);
+      showLoader();
       try {
         const response = await fetch(`${GAS_URL}?action=getData`);
         if (!response.ok) throw new Error('Network response was not ok');
@@ -535,12 +572,12 @@
         document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Ошибка загрузки данных</td></tr>";
         console.error(e);
       } finally {
-        showLoader(false);
+        hideLoader();
       }
     }
 
     async function updateSheet(rowNumber, doneByValue, breakdownValue) {
-      showLoader(true);
+      showLoader();
       try {
         const params = new URLSearchParams({
           action: 'update',
@@ -561,7 +598,7 @@
         alert('Ошибка при обновлении данных');
         console.error(e);
       } finally {
-        showLoader(false);
+        hideLoader();
       }
     }
 
