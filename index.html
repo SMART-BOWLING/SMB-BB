@@ -279,7 +279,6 @@
       background-color: #a90e2e;
     }
 
-    /* Обновленные стили пагинации */
     .pagination {
       display: flex;
       justify-content: center;
@@ -400,7 +399,7 @@
          data-callback="handleCredentialResponse"
          data-auto_prompt="false">
     </div>
-    <div class="g_id_signin" data-type="standard"></div>
+    <div class="g_id_signin" data-type="standard" data-theme="filled_blue"></div>
   </div>
 
   <div id="loader" class="loader-container" style="display: none;">
@@ -462,40 +461,56 @@
     let activeSearchText = "";
 
     function handleCredentialResponse(response) {
-      showLoader(true);
+      showLoader();
       try {
+        console.log("Google auth response:", response);
+        if (!response.credential) {
+          throw new Error("Не получены учетные данные от Google");
+        }
+        
         const data = parseJwt(response.credential);
+        console.log("Decoded JWT:", data);
+        
         const email = data.email;
         if (allowedEmails.includes(email)) {
           localStorage.setItem("userEmail", email);
+          console.log("Authorization successful for:", email);
           location.reload();
         } else {
-          alert("Доступ запрещён для: " + email);
+          alert("Доступ запрещён. Ваш email: " + email);
+          console.warn("Access denied for:", email);
         }
+      } catch (e) {
+        console.error("Authorization error:", e);
+        alert("Ошибка авторизации: " + e.message);
       } finally {
-        showLoader(false);
+        hideLoader();
       }
     }
 
     function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join('');
-      return JSON.parse(jsonPayload);
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('');
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("JWT parsing error:", e);
+        throw new Error("Ошибка обработки токена");
+      }
     }
 
-    window.onload = function() {
+    function checkAuth() {
       const userEmail = localStorage.getItem("userEmail");
       if (userEmail && allowedEmails.includes(userEmail)) {
         document.getElementById("login").style.display = "none";
         document.getElementById("app-content").style.display = "block";
-        loadSheetData();
-      } else {
-        document.getElementById("login").style.display = "flex";
+        return true;
       }
-    };
+      return false;
+    }
 
     function toggleDropdown() {
       const menu = document.getElementById("dropdownMenu");
@@ -509,6 +524,16 @@
     function hideLoader() {
       document.getElementById("loader").style.display = "none";
     }
+
+    window.onload = function() {
+      console.log("Page loaded, checking authorization...");
+      if (!checkAuth()) {
+        document.getElementById("login").style.display = "flex";
+        console.log("Showing login form");
+      } else {
+        loadSheetData();
+      }
+    };
 
     async function loadSheetData() {
       showLoader();
