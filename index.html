@@ -316,7 +316,7 @@
     </div>
   </header>
 
-  <div class="task-summary-card" id="taskSummaryCard" style="display: none;">
+  <div class="task-summary-card">
     <div>Открытых задач</div>
     <div id="openTaskCount">0</div>
   </div>
@@ -546,10 +546,7 @@
 
     function updateOpenTaskCard(data) {
       const openCount = data.filter(row => !row[5] || !row[6]).length;
-      const card = document.getElementById("taskSummaryCard");
-      const count = document.getElementById("openTaskCount");
-      count.textContent = openCount;
-      card.style.display = openCount > 0 ? "flex" : "none";
+      document.getElementById("openTaskCount").textContent = openCount;
     }
   </script>
 </body>
