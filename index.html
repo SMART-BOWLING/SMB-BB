@@ -286,6 +286,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .schema-button.active-red {
+      background-color: #dc143c !important;
+      color: white !important;
     }
 
     button {
@@ -556,6 +562,28 @@
       document.getElementById("loader").style.display = "none";
     }
 
+    // Функция для отметки просмотренных схем
+    function markSchemaAsViewed(schemaUrl) {
+      const viewedSchemas = JSON.parse(localStorage.getItem('viewedSchemas') || '[]');
+      if (!viewedSchemas.includes(schemaUrl)) {
+        viewedSchemas.push(schemaUrl);
+        localStorage.setItem('viewedSchemas', JSON.stringify(viewedSchemas));
+      }
+    }
+
+    // Функция для применения стилей к просмотренным схемам
+    function applyViewedStyles() {
+      const viewedSchemas = JSON.parse(localStorage.getItem('viewedSchemas') || '[]');
+      const buttons = document.querySelectorAll('.schema-button');
+      
+      buttons.forEach(button => {
+        const href = button.getAttribute('href');
+        if (href && viewedSchemas.includes(href)) {
+          button.classList.add('active-red');
+        }
+      });
+    }
+
     async function loadSheetData() {
       showLoader();
       try {
@@ -568,6 +596,8 @@
           return;
         }
         renderPage(currentPage);
+        // Применяем стили после рендеринга
+        applyViewedStyles();
       } catch (e) {
         document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Ошибка загрузки данных</td></tr>";
         console.error(e);
@@ -594,6 +624,7 @@
 
         updateOpenTaskCard(fullData);
         renderPage(currentPage);
+        applyViewedStyles();
       } catch (e) {
         alert('Ошибка при обновлении данных');
         console.error(e);
@@ -614,14 +645,14 @@
       pageData.forEach((row) => {
         const tr = document.createElement("tr");
         const schemaLink = row[2]
-          ? `<a href="${row[2]}" target="_blank" class="schema-button">
+          ? `<a href="${row[2]}" target="_blank" class="schema-button" onclick="markSchemaAsViewed('${row[2]}')">
                <i class="fas fa-file-alt"></i>Открыть
              </a>`
           : "";
 
         tr.innerHTML = `
           <td data-label="ЗАДАЧА">${row[2] ? `
-            <a href="${row[2]}" target="_blank" class="schema-button">
+            <a href="${row[2]}" target="_blank" class="schema-button" onclick="markSchemaAsViewed('${row[2]}')">
               <i class="fas fa-file-alt"></i>Открыть
             </a>` : "Нет схемы"}
           </td>
@@ -689,6 +720,7 @@
         activeSearchText = searchText.trim().toLowerCase();
       }
       renderPage(currentPage);
+      applyViewedStyles();
     }
 
     function applyHighlight() {
@@ -724,6 +756,7 @@
         btn.onclick = () => {
           currentPage = i;
           renderPage(currentPage);
+          applyViewedStyles();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         pageContainer.appendChild(btn);
@@ -734,6 +767,7 @@
       if (currentPage > 1) {
         currentPage--;
         renderPage(currentPage);
+        applyViewedStyles();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
@@ -742,6 +776,7 @@
       if (currentPage * rowsPerPage < fullData.length) {
         currentPage++;
         renderPage(currentPage);
+        applyViewedStyles();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
