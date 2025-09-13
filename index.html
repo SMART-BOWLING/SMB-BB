@@ -663,12 +663,59 @@ BLOCKBUSTER
       document.getElementById("loader").style.display = "none";
     }
 
+    // Функция для преобразования даты в формат для сортировки
+    function parseDate(dateString) {
+      if (!dateString) return new Date(0); // Если даты нет, возвращаем очень старую дату
+      
+      // Пробуем разные форматы дат
+      const formats = [
+        /(\d{2})\.(\d{2})\.(\d{4})/, // DD.MM.YYYY
+        /(\d{4})-(\d{2})-(\d{2})/,    // YYYY-MM-DD
+        /(\d{1,2})\/(\d{1,2})\/(\d{4})/ // M/D/YYYY
+      ];
+      
+      let day, month, year;
+      
+      for (const format of formats) {
+        const match = dateString.match(format);
+        if (match) {
+          if (format === formats[0]) { // DD.MM.YYYY
+            day = parseInt(match[1], 10);
+            month = parseInt(match[2], 10) - 1;
+            year = parseInt(match[3], 10);
+          } else if (format === formats[1]) { // YYYY-MM-DD
+            year = parseInt(match[1], 10);
+            month = parseInt(match[2], 10) - 1;
+            day = parseInt(match[3], 10);
+          } else if (format === formats[2]) { // M/D/YYYY
+            month = parseInt(match[1], 10) - 1;
+            day = parseInt(match[2], 10);
+            year = parseInt(match[3], 10);
+          }
+          break;
+        }
+      }
+      
+      // Если не удалось распарсить, возвращаем очень старую дату
+      if (!day || !month || !year) return new Date(0);
+      
+      return new Date(year, month, day);
+    }
+
     async function loadSheetData() {
       showLoader();
       try {
         const response = await fetch(`${GAS_URL}?action=getData`);
         if (!response.ok) throw new Error('Network response was not ok');
         fullData = await response.json();
+        
+        // Сортируем данные по дате открытия (новые сначала)
+        fullData.sort((a, b) => {
+          const dateA = parseDate(a[3]); // Индекс 3 - дата открытия
+          const dateB = parseDate(b[3]);
+          return dateB - dateA; // Сортировка от новых к старым
+        });
+        
         updateOpenTaskCard(fullData);
         if (fullData.length === 0) {
           document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Нет задач</td></tr>";
@@ -699,8 +746,15 @@ BLOCKBUSTER
         const index = fullData.findIndex(row => row[0] === rowNumber);
         if (index !== -1) fullData[index] = updatedRow;
 
+        // После обновления пересортируем данные
+        fullData.sort((a, b) => {
+          const dateA = parseDate(a[3]);
+          const dateB = parseDate(b[3]);
+          return dateB - dateA;
+        });
+
         updateOpenTaskCard(fullData);
-        updateSingleRow(rowNumber, updatedRow);
+        renderPage(currentPage); // Полностью перерисовываем страницу
       } catch (e) {
         alert('Ошибка при обновлении данных');
         console.error(e);
@@ -710,7 +764,7 @@ BLOCKBUSTER
     }
 
     function renderPage(page) {
-      // Прокручиваем вверх только при перелистывании страниц
+      // Всегда прокручиваем вверх при смене страницы
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
       const tableBody = document.getElementById("tableBody");
