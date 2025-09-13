@@ -560,7 +560,6 @@ BLOCKBUSTER
     let activeSearchColumn = null;
     let activeSearchText = "";
     let selectedRow = null;
-    let scrollPosition = 0; // Добавляем переменную для сохранения позиции прокрутки
 
     document.addEventListener('DOMContentLoaded', function() {
       checkAuth();
@@ -617,7 +616,7 @@ BLOCKBUSTER
             if (data.email && allowedEmails.includes(data.email)) {
               localStorage.setItem('userEmail', data.email);
               window.location.href = window.location.origin + window.location.pathname;
-            else {
+            } else {
               alert('Доступ запрещен для: ' + data.email);
               localStorage.removeItem('userEmail');
             }
@@ -671,31 +670,14 @@ BLOCKBUSTER
         if (!response.ok) throw new Error('Network response was not ok');
         fullData = await response.json();
         
-        // Улучшенная логика сортировки
+        // Сортируем данные: сначала открытые задачи, затем закрытые
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6]; // Открытая задача (нет исполнителя или нет поломки)
-          const bIsOpen = !b[5] || !b[6]; // Открытая задача
+          const aIsOpen = !a[5] || !a[6]; // Проверяем, открыта ли задача a
+          const bIsOpen = !b[5] || !b[6]; // Проверяем, открыта ли задача b
           
-          // Сначала открытые, потом закрытые
-          if (aIsOpen && !bIsOpen) return -1;
-          if (!aIsOpen && bIsOpen) return 1;
-          
-          // Если обе открытые - сортируем по дате (старые сначала)
-          if (aIsOpen && bIsOpen) {
-            try {
-              const dateA = parseDate(a[3]); // Индекс 3 - дата открытия
-              const dateB = parseDate(b[3]);
-              
-              if (dateA && dateB) {
-                return dateA - dateB; // Старые даты первыми
-              }
-            } catch (e) {
-              console.error('Ошибка парсинга даты:', e);
-            }
-          }
-          
-          // Если обе закрытые или ошибка дат - сохраняем порядок
-          return 0;
+          if (aIsOpen && !bIsOpen) return -1; // a открыта, b закрыта - a идет первой
+          if (!aIsOpen && bIsOpen) return 1;  // a закрыта, b открыта - b идет первой
+          return 0; // Обе открыты или обе закрыты - сохраняем порядок
         });
         
         updateOpenTaskCard(fullData);
@@ -712,20 +694,7 @@ BLOCKBUSTER
       }
     }
 
-    // Функция для парсинга даты в формате DD.MM.YYYY
-    function parseDate(dateString) {
-      if (!dateString) return null;
-      const parts = dateString.split('.');
-      if (parts.length === 3) {
-        return new Date(parts[2], parts[1] - 1, parts[0]);
-      }
-      return null;
-    }
-
     async function updateSheet(rowNumber, doneByValue, breakdownValue) {
-      // Сохраняем позицию прокрутки перед обновлением
-      scrollPosition = window.scrollY || document.documentElement.scrollTop;
-      
       showLoader();
       try {
         const params = new URLSearchParams({
@@ -741,45 +710,30 @@ BLOCKBUSTER
         const index = fullData.findIndex(row => row[0] === rowNumber);
         if (index !== -1) fullData[index] = updatedRow;
 
-        // Применяем ту же логику сортировки
+        // После обновления снова сортируем данные
         fullData.sort((a, b) => {
           const aIsOpen = !a[5] || !a[6];
           const bIsOpen = !b[5] || !b[6];
           
           if (aIsOpen && !bIsOpen) return -1;
           if (!aIsOpen && bIsOpen) return 1;
-          
-          if (aIsOpen && bIsOpen) {
-            try {
-              const dateA = parseDate(a[3]);
-              const dateB = parseDate(b[3]);
-              
-              if (dateA && dateB) {
-                return dateA - dateB;
-              }
-            } catch (e) {
-              console.error('Ошибка парсинга даты:', e);
-            }
-          }
-          
           return 0;
         });
 
         updateOpenTaskCard(fullData);
-        renderPage(currentPage);
+        renderPage(currentPage); // Перерисовываем текущую страницу
       } catch (e) {
         alert('Ошибка при обновлении данных');
         console.error(e);
       } finally {
         hideLoader();
-        // Восстанавливаем позицию прокрутки после рендеринга
-        setTimeout(() => {
-          window.scrollTo(0, scrollPosition);
-        }, 100);
       }
     }
 
     function renderPage(page) {
+      // Прокручиваем вверх только при перелистывании страниц
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
       const tableBody = document.getElementById("tableBody");
       tableBody.innerHTML = "";
 
@@ -833,15 +787,19 @@ BLOCKBUSTER
             </div>
           </td>`;
         
+        // Добавляем обработчик клика на строку
         tr.addEventListener('click', function(e) {
+          // Не выделяем строку, если клик был по ссылке, кнопке или селекту
           if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') {
             return;
           }
           
+          // Снимаем выделение с предыдущей строки
           if (selectedRow) {
             selectedRow.classList.remove('selected');
           }
           
+          // Выделяем текущую строку
           this.classList.add('selected');
           selectedRow = this;
         });
@@ -866,6 +824,73 @@ BLOCKBUSTER
       }
 
       updateSheet(rowNumber, gSelect.value, iSelect.value);
+    }
+
+    function updateSingleRow(rowNumber, rowData) {
+      const rows = document.getElementById("tableBody").getElementsByTagName("tr");
+      
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const btn = row.querySelector(`button[id="btn_${rowNumber}"]`);
+        
+        if (btn) {
+          const schemaLink = rowData[2]
+            ? `<a href="${rowData[2]}" target="_blank" class="schema-button">
+                 <i class="fas fa-file-alt"></i>Открыть
+               </a>`
+            : "";
+
+          row.cells[0].innerHTML = rowData[2] ? `
+            <a href="${rowData[2]}" target="_blank" class="schema-button">
+              <i class="fas fa-file-alt"></i>Открыть
+            </a>` : "Нет схемы";
+          
+          row.cells[1].textContent = rowData[1];
+          row.cells[2].textContent = rowData[3];
+          row.cells[3].textContent = rowData[4];
+          
+          if (rowData[6]) {
+            row.cells[4].innerHTML = rowData[6];
+            row.cells[4].id = "";
+          } else {
+            row.cells[4].innerHTML = `
+              <select id="i_${rowData[0]}">
+                <option value="" selected disabled></option>
+                <option value="ЕСТЬ">ЕСТЬ</option>
+                <option value="НЕТ">НЕТ</option>
+              </select>`;
+            row.cells[4].id = `iText_${rowData[0]}`;
+          }
+          
+          if (rowData[5]) {
+            row.cells[5].innerHTML = rowData[5];
+            row.cells[5].id = "";
+          } else {
+            row.cells[5].innerHTML = `
+              <select id="g_${rowData[0]}">
+                <option value="" selected disabled></option>
+                <option value="МЕХАНИК(1)">МЕХаНИК(1)</option>
+                <option value="МЕХАНИК(2)">МЕХаНИК(2)</option>
+              </select>`;
+            row.cells[5].id = `gText_${rowData[0]}`;
+          }
+          
+          const buttonsRow = row.cells[6].querySelector('.buttons-row');
+          buttonsRow.innerHTML = `
+            ${schemaLink}
+            ${rowData[5] && rowData[6]
+              ? `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`
+              : `<button id="btn_${rowData[0]}" onclick="validateAndSend(${rowData[0]});">
+                   <i class="fas fa-paper-plane"></i>Отправить
+                 </button>`}
+          `;
+          
+          break;
+        }
+      }
+      
+      applyHighlight();
+      updateOpenTaskCard(fullData);
     }
 
     function startColumnSearch(columnIndex) {
