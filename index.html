@@ -561,6 +561,18 @@ BLOCKBUSTER
     let activeSearchText = "";
     let selectedRow = null;
 
+    // Функция для преобразования даты из формата DD.MM.YYYY в Date объект
+    function parseDate(dateString) {
+      if (!dateString || dateString.trim() === '') return new Date(0);
+      
+      const parts = dateString.split('.');
+      if (parts.length === 3) {
+        // Преобразуем DD.MM.YYYY в MM/DD/YYYY для корректного парсинга
+        return new Date(`${parts[1]}/${parts[0]}/${parts[2]}`);
+      }
+      return new Date(0);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       checkAuth();
       
@@ -681,8 +693,8 @@ BLOCKBUSTER
           if (!aIsOpen && bIsOpen) return 1;  // b (открытая) идет перед a (закрытой)
           
           // Если оба открыты или оба закрыты, сортируем по дате открытия (старые вверху)
-          const aOpenDate = new Date(a[3] || 0);
-          const bOpenDate = new Date(b[3] || 0);
+          const aOpenDate = parseDate(a[3]);
+          const bOpenDate = parseDate(b[3]);
           return aOpenDate - bOpenDate; // Старые задачи вверху
         });
         
@@ -695,7 +707,6 @@ BLOCKBUSTER
       } catch (e) {
         document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Ошибка загрузки данных</td></tr>";
         console.error(e);
-      } finally {
         hideLoader();
       }
     }
@@ -726,8 +737,8 @@ BLOCKBUSTER
           if (!aIsOpen && bIsOpen) return 1;  // b (открытая) идет перед a (закрытой)
           
           // Если оба открыты или оба закрыты, сортируем по дате открытия (старые вверху)
-          const aOpenDate = new Date(a[3] || 0);
-          const bOpenDate = new Date(b[3] || 0);
+          const aOpenDate = parseDate(a[3]);
+          const bOpenDate = parseDate(b[3]);
           return aOpenDate - bOpenDate; // Старые задачи вверху
         });
 
