@@ -672,12 +672,17 @@ BLOCKBUSTER
         
         // Сортируем данные: сначала открытые задачи, затем закрытые
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6]; // Открытая задача
+          const aIsOpen = !a[5] || !a[6]; // Открытая задача (нет исполнителя или нет поломки)
           const bIsOpen = !b[5] || !b[6]; // Открытая задача
           
+          // Сначала открытые, потом закрытые
           if (aIsOpen && !bIsOpen) return -1; // a идет первым
           if (!aIsOpen && bIsOpen) return 1;  // b идет первым
-          return 0; // Одинаковый статус, сохраняем порядок
+          
+          // Если оба открыты или оба закрыты, сортируем по дате открытия (новые вверху)
+          const aDate = new Date(a[3] || 0);
+          const bDate = new Date(b[3] || 0);
+          return bDate - aDate; // Новые задачи вверху
         });
         
         updateOpenTaskCard(fullData);
@@ -712,12 +717,17 @@ BLOCKBUSTER
 
         // После обновления пересортируем данные
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6];
-          const bIsOpen = !b[5] || !b[6];
+          const aIsOpen = !a[5] || !a[6]; // Открытая задача (нет исполнителя или нет поломки)
+          const bIsOpen = !b[5] || !b[6]; // Открытая задача
           
-          if (aIsOpen && !bIsOpen) return -1;
-          if (!aIsOpen && bIsOpen) return 1;
-          return 0;
+          // Сначала открытые, потом закрытые
+          if (aIsOpen && !bIsOpen) return -1; // a идет первым
+          if (!aIsOpen && bIsOpen) return 1;  // b идет первым
+          
+          // Если оба открыты или оба закрыты, сортируем по дате открытия (новые вверху)
+          const aDate = new Date(a[3] || 0);
+          const bDate = new Date(b[3] || 0);
+          return bDate - aDate; // Новые задачи вверху
         });
 
         updateOpenTaskCard(fullData);
