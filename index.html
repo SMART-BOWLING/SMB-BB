@@ -560,6 +560,7 @@ BLOCKBUSTER
     let activeSearchColumn = null;
     let activeSearchText = "";
     let selectedRow = null;
+    let scrollPosition = 0; // Добавляем переменную для сохранения позиции прокрутки
 
     document.addEventListener('DOMContentLoaded', function() {
       checkAuth();
@@ -616,7 +617,7 @@ BLOCKBUSTER
             if (data.email && allowedEmails.includes(data.email)) {
               localStorage.setItem('userEmail', data.email);
               window.location.href = window.location.origin + window.location.pathname;
-            } else {
+            else {
               alert('Доступ запрещен для: ' + data.email);
               localStorage.removeItem('userEmail');
             }
@@ -670,27 +671,30 @@ BLOCKBUSTER
         if (!response.ok) throw new Error('Network response was not ok');
         fullData = await response.json();
         
-        // НОВАЯ ЛОГИКА СОРТИРОВКИ: открытые старые задачи вверху, новые ниже
+        // Улучшенная логика сортировки
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6]; // Открытая задача
+          const aIsOpen = !a[5] || !a[6]; // Открытая задача (нет исполнителя или нет поломки)
           const bIsOpen = !b[5] || !b[6]; // Открытая задача
           
-          // Сначала разделяем открытые и закрытые
-          if (aIsOpen && !bIsOpen) return -1; // открытые перед закрытыми
-          if (!aIsOpen && bIsOpen) return 1;  // закрытые после открытых
+          // Сначала открытые, потом закрытые
+          if (aIsOpen && !bIsOpen) return -1;
+          if (!aIsOpen && bIsOpen) return 1;
           
-          // Если обе задачи открытые - сортируем по дате открытия (старые сначала)
+          // Если обе открытые - сортируем по дате (старые сначала)
           if (aIsOpen && bIsOpen) {
-            const dateA = new Date(a[3]); // Индекс 3 - дата открытия
-            const dateB = new Date(b[3]);
-            
-            // Старые даты должны быть первыми
-            if (dateA < dateB) return -1;
-            if (dateA > dateB) return 1;
-            return 0;
+            try {
+              const dateA = parseDate(a[3]); // Индекс 3 - дата открытия
+              const dateB = parseDate(b[3]);
+              
+              if (dateA && dateB) {
+                return dateA - dateB; // Старые даты первыми
+              }
+            } catch (e) {
+              console.error('Ошибка парсинга даты:', e);
+            }
           }
           
-          // Если обе задачи закрытые - сохраняем исходный порядок
+          // Если обе закрытые или ошибка дат - сохраняем порядок
           return 0;
         });
         
@@ -708,7 +712,20 @@ BLOCKBUSTER
       }
     }
 
+    // Функция для парсинга даты в формате DD.MM.YYYY
+    function parseDate(dateString) {
+      if (!dateString) return null;
+      const parts = dateString.split('.');
+      if (parts.length === 3) {
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+      }
+      return null;
+    }
+
     async function updateSheet(rowNumber, doneByValue, breakdownValue) {
+      // Сохраняем позицию прокрутки перед обновлением
+      scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      
       showLoader();
       try {
         const params = new URLSearchParams({
@@ -724,7 +741,7 @@ BLOCKBUSTER
         const index = fullData.findIndex(row => row[0] === rowNumber);
         if (index !== -1) fullData[index] = updatedRow;
 
-        // После обновления применяем ту же логику сортировки
+        // Применяем ту же логику сортировки
         fullData.sort((a, b) => {
           const aIsOpen = !a[5] || !a[6];
           const bIsOpen = !b[5] || !b[6];
@@ -733,12 +750,16 @@ BLOCKBUSTER
           if (!aIsOpen && bIsOpen) return 1;
           
           if (aIsOpen && bIsOpen) {
-            const dateA = new Date(a[3]);
-            const dateB = new Date(b[3]);
-            
-            if (dateA < dateB) return -1;
-            if (dateA > dateB) return 1;
-            return 0;
+            try {
+              const dateA = parseDate(a[3]);
+              const dateB = parseDate(b[3]);
+              
+              if (dateA && dateB) {
+                return dateA - dateB;
+              }
+            } catch (e) {
+              console.error('Ошибка парсинга даты:', e);
+            }
           }
           
           return 0;
@@ -751,13 +772,14 @@ BLOCKBUSTER
         console.error(e);
       } finally {
         hideLoader();
+        // Восстанавливаем позицию прокрутки после рендеринга
+        setTimeout(() => {
+          window.scrollTo(0, scrollPosition);
+        }, 100);
       }
     }
 
     function renderPage(page) {
-      // Всегда прокручиваем вверх при смене страницы
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
       const tableBody = document.getElementById("tableBody");
       tableBody.innerHTML = "";
 
@@ -811,19 +833,15 @@ BLOCKBUSTER
             </div>
           </td>`;
         
-        // Добавляем обработчик клика на строку
         tr.addEventListener('click', function(e) {
-          // Не выделяем строку, если клик был по ссылке, кнопке или селекту
           if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') {
             return;
           }
           
-          // Снимаем выделение с предыдущей строки
           if (selectedRow) {
             selectedRow.classList.remove('selected');
           }
           
-          // Выделяем текущую строку
           this.classList.add('selected');
           selectedRow = this;
         });
