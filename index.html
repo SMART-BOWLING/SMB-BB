@@ -663,45 +663,6 @@ BLOCKBUSTER
       document.getElementById("loader").style.display = "none";
     }
 
-    // Функция для преобразования даты в формат для сортировки
-    function parseDate(dateString) {
-      if (!dateString) return new Date(0); // Если даты нет, возвращаем очень старую дату
-      
-      // Пробуем разные форматы дат
-      const formats = [
-        /(\d{2})\.(\d{2})\.(\d{4})/, // DD.MM.YYYY
-        /(\d{4})-(\d{2})-(\d{2})/,    // YYYY-MM-DD
-        /(\d{1,2})\/(\d{1,2})\/(\d{4})/ // M/D/YYYY
-      ];
-      
-      let day, month, year;
-      
-      for (const format of formats) {
-        const match = dateString.match(format);
-        if (match) {
-          if (format === formats[0]) { // DD.MM.YYYY
-            day = parseInt(match[1], 10);
-            month = parseInt(match[2], 10) - 1;
-            year = parseInt(match[3], 10);
-          } else if (format === formats[1]) { // YYYY-MM-DD
-            year = parseInt(match[1], 10);
-            month = parseInt(match[2], 10) - 1;
-            day = parseInt(match[3], 10);
-          } else if (format === formats[2]) { // M/D/YYYY
-            month = parseInt(match[1], 10) - 1;
-            day = parseInt(match[2], 10);
-            year = parseInt(match[3], 10);
-          }
-          break;
-        }
-      }
-      
-      // Если не удалось распарсить, возвращаем очень старую дату
-      if (!day || !month || !year) return new Date(0);
-      
-      return new Date(year, month, day);
-    }
-
     async function loadSheetData() {
       showLoader();
       try {
@@ -709,11 +670,14 @@ BLOCKBUSTER
         if (!response.ok) throw new Error('Network response was not ok');
         fullData = await response.json();
         
-        // Сортируем данные по дате открытия (новые сначала)
+        // Сортируем данные: сначала открытые задачи, затем закрытые
         fullData.sort((a, b) => {
-          const dateA = parseDate(a[3]); // Индекс 3 - дата открытия
-          const dateB = parseDate(b[3]);
-          return dateB - dateA; // Сортировка от новых к старым
+          const aIsOpen = !a[5] || !a[6]; // Открытая задача
+          const bIsOpen = !b[5] || !b[6]; // Открытая задача
+          
+          if (aIsOpen && !bIsOpen) return -1; // a идет первым
+          if (!aIsOpen && bIsOpen) return 1;  // b идет первым
+          return 0; // Одинаковый статус, сохраняем порядок
         });
         
         updateOpenTaskCard(fullData);
@@ -748,13 +712,16 @@ BLOCKBUSTER
 
         // После обновления пересортируем данные
         fullData.sort((a, b) => {
-          const dateA = parseDate(a[3]);
-          const dateB = parseDate(b[3]);
-          return dateB - dateA;
+          const aIsOpen = !a[5] || !a[6];
+          const bIsOpen = !b[5] || !b[6];
+          
+          if (aIsOpen && !bIsOpen) return -1;
+          if (!aIsOpen && bIsOpen) return 1;
+          return 0;
         });
 
         updateOpenTaskCard(fullData);
-        renderPage(currentPage); // Полностью перерисовываем страницу
+        renderPage(currentPage); // Перерисовываем текущую страницу
       } catch (e) {
         alert('Ошибка при обновлении данных');
         console.error(e);
@@ -857,73 +824,6 @@ BLOCKBUSTER
       }
 
       updateSheet(rowNumber, gSelect.value, iSelect.value);
-    }
-
-    function updateSingleRow(rowNumber, rowData) {
-      const rows = document.getElementById("tableBody").getElementsByTagName("tr");
-      
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const btn = row.querySelector(`button[id="btn_${rowNumber}"]`);
-        
-        if (btn) {
-          const schemaLink = rowData[2]
-            ? `<a href="${rowData[2]}" target="_blank" class="schema-button">
-                 <i class="fas fa-file-alt"></i>Открыть
-               </a>`
-            : "";
-
-          row.cells[0].innerHTML = rowData[2] ? `
-            <a href="${rowData[2]}" target="_blank" class="schema-button">
-              <i class="fas fa-file-alt"></i>Открыть
-            </a>` : "Нет схемы";
-          
-          row.cells[1].textContent = rowData[1];
-          row.cells[2].textContent = rowData[3];
-          row.cells[3].textContent = rowData[4];
-          
-          if (rowData[6]) {
-            row.cells[4].innerHTML = rowData[6];
-            row.cells[4].id = "";
-          } else {
-            row.cells[4].innerHTML = `
-              <select id="i_${rowData[0]}">
-                <option value="" selected disabled></option>
-                <option value="ЕСТЬ">ЕСТЬ</option>
-                <option value="НЕТ">НЕТ</option>
-              </select>`;
-            row.cells[4].id = `iText_${rowData[0]}`;
-          }
-          
-          if (rowData[5]) {
-            row.cells[5].innerHTML = rowData[5];
-            row.cells[5].id = "";
-          } else {
-            row.cells[5].innerHTML = `
-              <select id="g_${rowData[0]}">
-                <option value="" selected disabled></option>
-                <option value="МЕХАНИК(1)">МЕХаНИК(1)</option>
-                <option value="МЕХАНИК(2)">МЕХаНИК(2)</option>
-              </select>`;
-            row.cells[5].id = `gText_${rowData[0]}`;
-          }
-          
-          const buttonsRow = row.cells[6].querySelector('.buttons-row');
-          buttonsRow.innerHTML = `
-            ${schemaLink}
-            ${rowData[5] && rowData[6]
-              ? `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`
-              : `<button id="btn_${rowData[0]}" onclick="validateAndSend(${rowData[0]});">
-                   <i class="fas fa-paper-plane"></i>Отправить
-                 </button>`}
-          `;
-          
-          break;
-        }
-      }
-      
-      applyHighlight();
-      updateOpenTaskCard(fullData);
     }
 
     function startColumnSearch(columnIndex) {
