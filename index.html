@@ -670,19 +670,20 @@ BLOCKBUSTER
         if (!response.ok) throw new Error('Network response was not ok');
         fullData = await response.json();
         
-        // Сортируем данные: сначала открытые задачи, затем закрытые
+        // Сортируем данные: сначала открытые задачи (без даты закрытия), затем закрытые
+        // Внутри каждой группы сортируем по дате открытия (старые вверху)
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6]; // Открытая задача (нет исполнителя или нет поломки)
-          const bIsOpen = !b[5] || !b[6]; // Открытая задача
+          const aIsOpen = !a[4] || a[4].trim() === ''; // Открытая задача (нет даты закрытия)
+          const bIsOpen = !b[4] || b[4].trim() === ''; // Открытая задача
           
           // Сначала открытые, потом закрытые
-          if (aIsOpen && !bIsOpen) return -1; // a идет первым
-          if (!aIsOpen && bIsOpen) return 1;  // b идет первым
+          if (aIsOpen && !bIsOpen) return -1; // a (открытая) идет перед b (закрытой)
+          if (!aIsOpen && bIsOpen) return 1;  // b (открытая) идет перед a (закрытой)
           
           // Если оба открыты или оба закрыты, сортируем по дате открытия (старые вверху)
-          const aDate = new Date(a[3] || 0);
-          const bDate = new Date(b[3] || 0);
-          return aDate - bDate; // Старые задачи вверху
+          const aOpenDate = new Date(a[3] || 0);
+          const bOpenDate = new Date(b[3] || 0);
+          return aOpenDate - bOpenDate; // Старые задачи вверху
         });
         
         updateOpenTaskCard(fullData);
@@ -717,17 +718,17 @@ BLOCKBUSTER
 
         // После обновления пересортируем данные
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6]; // Открытая задача (нет исполнителя или нет поломки)
-          const bIsOpen = !b[5] || !b[6]; // Открытая задача
+          const aIsOpen = !a[4] || a[4].trim() === ''; // Открытая задача (нет даты закрытия)
+          const bIsOpen = !b[4] || b[4].trim() === ''; // Открытая задача
           
           // Сначала открытые, потом закрытые
-          if (aIsOpen && !bIsOpen) return -1; // a идет первым
-          if (!aIsOpen && bIsOpen) return 1;  // b идет первым
+          if (aIsOpen && !bIsOpen) return -1; // a (открытая) идет перед b (закрытой)
+          if (!aIsOpen && bIsOpen) return 1;  // b (открытая) идет перед a (закрытой)
           
           // Если оба открыты или оба закрыты, сортируем по дате открытия (старые вверху)
-          const aDate = new Date(a[3] || 0);
-          const bDate = new Date(b[3] || 0);
-          return aDate - bDate; // Старые задачи вверху
+          const aOpenDate = new Date(a[3] || 0);
+          const bOpenDate = new Date(b[3] || 0);
+          return aOpenDate - bOpenDate; // Старые задачи вверху
         });
 
         updateOpenTaskCard(fullData);
@@ -923,7 +924,7 @@ BLOCKBUSTER
     }
 
     function updateOpenTaskCard(data) {
-      const openCount = data.filter(row => !row[5] || !row[6]).length;
+      const openCount = data.filter(row => !row[4] || row[4].trim() === '').length;
       document.getElementById("openTaskCount").textContent = openCount;
     }
   </script>
