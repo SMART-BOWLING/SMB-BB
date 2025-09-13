@@ -679,10 +679,10 @@ BLOCKBUSTER
           if (aIsOpen && !bIsOpen) return -1; // a идет первым
           if (!aIsOpen && bIsOpen) return 1;  // b идет первым
           
-          // Если оба открыты или оба закрыты, сортируем по дате открытия (новые вверху)
+          // Если оба открыты или оба закрыты, сортируем по дате открытия (старые вверху)
           const aDate = new Date(a[3] || 0);
           const bDate = new Date(b[3] || 0);
-          return bDate - aDate; // Новые задачи вверху
+          return aDate - bDate; // Старые задачи вверху
         });
         
         updateOpenTaskCard(fullData);
@@ -724,10 +724,10 @@ BLOCKBUSTER
           if (aIsOpen && !bIsOpen) return -1; // a идет первым
           if (!aIsOpen && bIsOpen) return 1;  // b идет первым
           
-          // Если оба открыты или оба закрыты, сортируем по дате открытия (новые вверху)
+          // Если оба открыты или оба закрыты, сортируем по дате открытия (старые вверху)
           const aDate = new Date(a[3] || 0);
           const bDate = new Date(b[3] || 0);
-          return bDate - aDate; // Новые задачи вверху
+          return aDate - bDate; // Старые задачи вверху
         });
 
         updateOpenTaskCard(fullData);
