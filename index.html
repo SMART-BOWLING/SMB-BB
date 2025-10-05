@@ -721,18 +721,22 @@ BLOCKBUSTER
         });
 
         updateOpenTaskCard(fullData);
-        renderPage(currentPage); // Перерисовываем текущую страницу
+        renderPage(currentPage, false); // Перерисовываем текущую страницу без прокрутки вверх
+        
+        return Promise.resolve();
       } catch (e) {
         alert('Ошибка при обновлении данных');
         console.error(e);
+        return Promise.reject(e);
       } finally {
         hideLoader();
       }
     }
 
-    function renderPage(page) {
-      // Прокручиваем вверх только при перелистывании страниц
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function renderPage(page, scrollToTop = true) {
+      if (scrollToTop) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       
       const tableBody = document.getElementById("tableBody");
       tableBody.innerHTML = "";
@@ -823,7 +827,13 @@ BLOCKBUSTER
         return;
       }
 
-      updateSheet(rowNumber, gSelect.value, iSelect.value);
+      // Сохраняем текущую позицию прокрутки
+      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      
+      updateSheet(rowNumber, gSelect.value, iSelect.value).then(() => {
+        // Восстанавливаем позицию прокрутки после обновления
+        window.scrollTo(0, scrollPosition);
+      });
     }
 
     function updateSingleRow(rowNumber, rowData) {
@@ -960,7 +970,7 @@ BLOCKBUSTER
       if (pageNumber === currentPage) btn.classList.add("active");
       btn.onclick = () => {
         currentPage = pageNumber;
-        renderPage(currentPage);
+        renderPage(currentPage, true);
       };
       container.appendChild(btn);
     }
@@ -968,14 +978,14 @@ BLOCKBUSTER
     function prevPage() {
       if (currentPage > 1) {
         currentPage--;
-        renderPage(currentPage);
+        renderPage(currentPage, true);
       }
     }
 
     function nextPage() {
       if (currentPage * rowsPerPage < fullData.length) {
         currentPage++;
-        renderPage(currentPage);
+        renderPage(currentPage, true);
       }
     }
 
