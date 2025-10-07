@@ -209,6 +209,39 @@
       padding-bottom: 8px;
     }
 
+    .previous-winner {
+      background: linear-gradient(135deg, #ffd700, #ffed4e);
+      margin: 10px auto 0px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      width: 84%;
+      max-width: 500px;
+      padding: 12px 15px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .previous-winner h4 {
+      margin: 0 0 8px 0;
+      color: #1a2f40;
+      font-size: 14px;
+    }
+
+    .winner-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: #1a2f40;
+    }
+
+    .crown-icon {
+      color: #ffd700;
+      font-size: 18px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
     .rating-item {
       display: flex;
       justify-content: space-between;
@@ -611,8 +644,13 @@ BLOCKBUSTER
   </div>
 
   <div class="mechanics-rating" id="mechanicsRating" style="display: none;">
-    <h3><i class="fas fa-trophy"></i> Рейтинг механиков за месяц</h3>
+    <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
     <div id="ratingContent"></div>
+  </div>
+
+  <div class="previous-winner" id="previousWinner" style="display: none;">
+    <h4><i class="fas fa-crown"></i> Победитель прошлого месяца</h4>
+    <div id="winnerContent"></div>
   </div>
 
   <div id="app-content" style="display:none;">
@@ -786,33 +824,73 @@ BLOCKBUSTER
     function updateMechanicsRating(data) {
       const ratingContainer = document.getElementById('mechanicsRating');
       const ratingContent = document.getElementById('ratingContent');
+      const previousWinnerContainer = document.getElementById('previousWinner');
+      const winnerContent = document.getElementById('winnerContent');
       
-      // Создаем объект для подсчета задач по механикам
-      const mechanicsStats = {};
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
       
-      // Простой подсчет всех выполненных задач механиками
+      // Определяем предыдущий месяц
+      let prevMonth = currentMonth - 1;
+      let prevYear = currentYear;
+      if (prevMonth < 0) {
+        prevMonth = 11;
+        prevYear = currentYear - 1;
+      }
+      
+      const monthNames = [
+        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+      ];
+      
+      // Статистика для текущего месяца
+      const currentMonthStats = {};
+      // Статистика для предыдущего месяца
+      const previousMonthStats = {};
+      
+      // Обрабатываем все данные
       data.forEach(row => {
-        const mechanic = row[5]; // Исполнитель (столбец 5)
-        if (mechanic && (mechanic === 'МЕХАНИК(1)' || mechanic === 'МЕХАНИК(2)')) {
-          mechanicsStats[mechanic] = (mechanicsStats[mechanic] || 0) + 1;
+        if (row[4] && row[4].trim() !== '') {
+          try {
+            const dateParts = row[4].split('.');
+            if (dateParts.length === 3) {
+              const day = parseInt(dateParts[0]);
+              const month = parseInt(dateParts[1]) - 1;
+              const year = parseInt(dateParts[2]);
+              
+              const mechanic = row[5];
+              
+              if (mechanic && (mechanic === 'МЕХАНИК(1)' || mechanic === 'МЕХАНИК(2)')) {
+                // Текущий месяц
+                if (month === currentMonth && year === currentYear) {
+                  currentMonthStats[mechanic] = (currentMonthStats[mechanic] || 0) + 1;
+                }
+                // Предыдущий месяц
+                if (month === prevMonth && year === prevYear) {
+                  previousMonthStats[mechanic] = (previousMonthStats[mechanic] || 0) + 1;
+                }
+              }
+            }
+          } catch (e) {
+            console.error('Ошибка парсинга даты:', row[4], e);
+          }
         }
       });
       
-      // Создаем массив для сортировки
-      const ratingArray = Object.entries(mechanicsStats).map(([name, count]) => ({
+      // ОБНОВЛЯЕМ РЕЙТИНГ ТЕКУЩЕГО МЕСЯЦА
+      const currentMonthArray = Object.entries(currentMonthStats).map(([name, count]) => ({
         name,
         count
       }));
       
-      // Сортируем по убыванию количества задач
-      ratingArray.sort((a, b) => b.count - a.count);
+      currentMonthArray.sort((a, b) => b.count - a.count);
       
-      // Если есть данные для отображения
-      if (ratingArray.length > 0) {
+      if (currentMonthArray.length > 0) {
         ratingContainer.style.display = 'block';
         ratingContent.innerHTML = '';
         
-        ratingArray.forEach((mechanic, index) => {
+        currentMonthArray.forEach((mechanic, index) => {
           const place = index + 1;
           const ratingItem = document.createElement('div');
           ratingItem.className = 'rating-item';
@@ -833,9 +911,31 @@ BLOCKBUSTER
           ratingContent.appendChild(ratingItem);
         });
       } else {
-        // Показываем сообщение, если нет данных
         ratingContainer.style.display = 'block';
-        ratingContent.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Нет данных о выполненных задачах</div>';
+        ratingContent.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;">Нет данных за ${monthNames[currentMonth]}</div>`;
+      }
+      
+      // ОБНОВЛЯЕМ ПОБЕДИТЕЛЯ ПРЕДЫДУЩЕГО МЕСЯЦА
+      const previousMonthArray = Object.entries(previousMonthStats).map(([name, count]) => ({
+        name,
+        count
+      }));
+      
+      previousMonthArray.sort((a, b) => b.count - a.count);
+      
+      if (previousMonthArray.length > 0 && previousMonthArray[0].count > 0) {
+        const winner = previousMonthArray[0];
+        previousWinnerContainer.style.display = 'block';
+        winnerContent.innerHTML = `
+          <div class="winner-info">
+            <i class="fas fa-crown crown-icon"></i>
+            <span>${winner.name}</span>
+            <span>(${winner.count} задач)</span>
+          </div>
+        `;
+      } else {
+        previousWinnerContainer.style.display = 'block';
+        winnerContent.innerHTML = `<div style="text-align: center; color: #666;">Нет данных за ${monthNames[prevMonth]}</div>`;
       }
     }
 
