@@ -760,12 +760,12 @@ BLOCKBUSTER
         
         // Сортируем данные: сначала открытые задачи, затем закрытые
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5] || !a[6]; // Проверяем, открыта ли задача a
-          const bIsOpen = !b[5] || !b[6]; // Проверяем, открыта ли задача b
+          const aIsOpen = !a[5] || !a[6];
+          const bIsOpen = !b[5] || !b[6];
           
-          if (aIsOpen && !bIsOpen) return -1; // a открыта, b закрыта - a идет первой
-          if (!aIsOpen && bIsOpen) return 1;  // a закрыта, b открыта - b идет первой
-          return 0; // Обе открыты или обе закрыты - сохраняем порядок
+          if (aIsOpen && !bIsOpen) return -1;
+          if (!aIsOpen && bIsOpen) return 1;
+          return 0;
         });
         
         updateOpenTaskCard(fullData);
@@ -789,22 +789,12 @@ BLOCKBUSTER
       
       // Создаем объект для подсчета задач по механикам
       const mechanicsStats = {};
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
       
-      // Фильтруем задачи за предыдущий месяц
+      // Простой подсчет всех выполненных задач механиками
       data.forEach(row => {
-        if (row[4]) { // Если есть дата закрытия
-          const closedDate = new Date(row[4]);
-          // Проверяем, что задача закрыта в предыдущем месяце
-          if (closedDate.getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && 
-              closedDate.getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)) {
-            const mechanic = row[5]; // Исполнитель
-            if (mechanic && (mechanic === 'МЕХАНИК(1)' || mechanic === 'МЕХАНИК(2)')) {
-              mechanicsStats[mechanic] = (mechanicsStats[mechanic] || 0) + 1;
-            }
-          }
+        const mechanic = row[5]; // Исполнитель (столбец 5)
+        if (mechanic && (mechanic === 'МЕХАНИК(1)' || mechanic === 'МЕХАНИК(2)')) {
+          mechanicsStats[mechanic] = (mechanicsStats[mechanic] || 0) + 1;
         }
       });
       
@@ -843,7 +833,9 @@ BLOCKBUSTER
           ratingContent.appendChild(ratingItem);
         });
       } else {
-        ratingContainer.style.display = 'none';
+        // Показываем сообщение, если нет данных
+        ratingContainer.style.display = 'block';
+        ratingContent.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Нет данных о выполненных задачах</div>';
       }
     }
 
@@ -875,7 +867,7 @@ BLOCKBUSTER
 
         updateOpenTaskCard(fullData);
         updateMechanicsRating(fullData);
-        renderPage(currentPage, false); // Перерисовываем текущую страницу без прокрутки вверх
+        renderPage(currentPage, false);
         
         return Promise.resolve();
       } catch (e) {
@@ -1033,8 +1025,8 @@ BLOCKBUSTER
             row.cells[5].innerHTML = `
               <select id="g_${rowData[0]}">
                 <option value="" selected disabled></option>
-                <option value="МЕХАНИК(1)">МЕХаНИК(1)</option>
-                <option value="МЕХАНИК(2)">МЕХаНИК(2)</option>
+                <option value="МЕХАНИК(1)">МЕХАНИК(1)</option>
+                <option value="МЕХАНИК(2)">МЕХАНИК(2)</option>
               </select>`;
             row.cells[5].id = `gText_${rowData[0]}`;
           }
