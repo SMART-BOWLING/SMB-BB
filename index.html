@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -187,6 +187,89 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       width: 84%;
       max-width: 500px;
+    }
+
+    .mechanics-rating {
+      background-color: #fff;
+      margin: 15px auto 0px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      width: 84%;
+      max-width: 500px;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    .mechanics-rating h3 {
+      margin: 0 0 12px 0;
+      text-align: center;
+      color: #1a2f40;
+      font-size: 16px;
+      border-bottom: 2px solid #dc143c;
+      padding-bottom: 8px;
+    }
+
+    .rating-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .rating-item:last-child {
+      border-bottom: none;
+    }
+
+    .mechanic-name {
+      font-weight: 600;
+      color: #1a2f40;
+    }
+
+    .task-count {
+      background-color: #dc143c;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .rating-place {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .place-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: white;
+    }
+
+    .place-1 {
+      background-color: #ffd700;
+      color: #000;
+    }
+
+    .place-2 {
+      background-color: #c0c0c0;
+    }
+
+    .place-3 {
+      background-color: #cd7f32;
+    }
+
+    .place-other {
+      background-color: #1a2f40;
     }
 
     #app-content {
@@ -527,6 +610,11 @@ BLOCKBUSTER
     <div id="openTaskCount">0</div>
   </div>
 
+  <div class="mechanics-rating" id="mechanicsRating" style="display: none;">
+    <h3><i class="fas fa-trophy"></i> Рейтинг механиков за месяц</h3>
+    <div id="ratingContent"></div>
+  </div>
+
   <div id="app-content" style="display:none;">
     <table>
       <thead>
@@ -681,6 +769,7 @@ BLOCKBUSTER
         });
         
         updateOpenTaskCard(fullData);
+        updateMechanicsRating(fullData);
         if (fullData.length === 0) {
           document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Нет задач</td></tr>";
           return;
@@ -691,6 +780,70 @@ BLOCKBUSTER
         console.error(e);
       } finally {
         hideLoader();
+      }
+    }
+
+    function updateMechanicsRating(data) {
+      const ratingContainer = document.getElementById('mechanicsRating');
+      const ratingContent = document.getElementById('ratingContent');
+      
+      // Создаем объект для подсчета задач по механикам
+      const mechanicsStats = {};
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth();
+      const currentYear = currentDate.getFullYear();
+      
+      // Фильтруем задачи за предыдущий месяц
+      data.forEach(row => {
+        if (row[4]) { // Если есть дата закрытия
+          const closedDate = new Date(row[4]);
+          // Проверяем, что задача закрыта в предыдущем месяце
+          if (closedDate.getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && 
+              closedDate.getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)) {
+            const mechanic = row[5]; // Исполнитель
+            if (mechanic && (mechanic === 'МЕХАНИК(1)' || mechanic === 'МЕХАНИК(2)')) {
+              mechanicsStats[mechanic] = (mechanicsStats[mechanic] || 0) + 1;
+            }
+          }
+        }
+      });
+      
+      // Создаем массив для сортировки
+      const ratingArray = Object.entries(mechanicsStats).map(([name, count]) => ({
+        name,
+        count
+      }));
+      
+      // Сортируем по убыванию количества задач
+      ratingArray.sort((a, b) => b.count - a.count);
+      
+      // Если есть данные для отображения
+      if (ratingArray.length > 0) {
+        ratingContainer.style.display = 'block';
+        ratingContent.innerHTML = '';
+        
+        ratingArray.forEach((mechanic, index) => {
+          const place = index + 1;
+          const ratingItem = document.createElement('div');
+          ratingItem.className = 'rating-item';
+          
+          let placeClass = 'place-other';
+          if (place === 1) placeClass = 'place-1';
+          else if (place === 2) placeClass = 'place-2';
+          else if (place === 3) placeClass = 'place-3';
+          
+          ratingItem.innerHTML = `
+            <div class="rating-place">
+              <div class="place-badge ${placeClass}">${place}</div>
+              <span class="mechanic-name">${mechanic.name}</span>
+            </div>
+            <div class="task-count">${mechanic.count}</div>
+          `;
+          
+          ratingContent.appendChild(ratingItem);
+        });
+      } else {
+        ratingContainer.style.display = 'none';
       }
     }
 
@@ -721,6 +874,7 @@ BLOCKBUSTER
         });
 
         updateOpenTaskCard(fullData);
+        updateMechanicsRating(fullData);
         renderPage(currentPage, false); // Перерисовываем текущую страницу без прокрутки вверх
         
         return Promise.resolve();
@@ -901,6 +1055,7 @@ BLOCKBUSTER
       
       applyHighlight();
       updateOpenTaskCard(fullData);
+      updateMechanicsRating(fullData);
     }
 
     function startColumnSearch(columnIndex) {
