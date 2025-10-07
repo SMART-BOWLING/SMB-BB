@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -535,7 +535,8 @@ BLOCKBUSTER
           <th onclick="startColumnSearch(1)">МАШИНА</th>
           <th onclick="startColumnSearch(2)">ОТКРЫТА</th>
           <th onclick="startColumnSearch(3)">ЗАКРЫТА</th>
-          <th onclick="startColumnSearch(4)">ВЫПОЛНИЛ</th>
+          <th onclick="startColumnSearch(4)">ВЫПоЛНИЛ</th>
+          <th onclick="startColumnSearch(5)">ПОЛОМКА</th>
           <th>ОТПРАВИТЬ</th>
         </tr>
       </thead>
@@ -671,8 +672,8 @@ BLOCKBUSTER
         
         // Сортируем данные: сначала открытые задачи, затем закрытые
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5]; // Проверяем, открыта ли задача a (только по выполнению)
-          const bIsOpen = !b[5]; // Проверяем, открыта ли задача b (только по выполнению)
+          const aIsOpen = !a[5] || !a[6]; // Проверяем, открыта ли задача a
+          const bIsOpen = !b[5] || !b[6]; // Проверяем, открыта ли задача b
           
           if (aIsOpen && !bIsOpen) return -1; // a открыта, b закрыта - a идет первой
           if (!aIsOpen && bIsOpen) return 1;  // a закрыта, b открыта - b идет первой
@@ -681,25 +682,26 @@ BLOCKBUSTER
         
         updateOpenTaskCard(fullData);
         if (fullData.length === 0) {
-          document.getElementById("tableBody").innerHTML = "<tr><td colspan='6'>Нет задач</td></tr>";
+          document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Нет задач</td></tr>";
           return;
         }
         renderPage(currentPage);
       } catch (e) {
-        document.getElementById("tableBody").innerHTML = "<tr><td colspan='6'>Ошибка загрузки данных</td></tr>";
+        document.getElementById("tableBody").innerHTML = "<tr><td colspan='7'>Ошибка загрузки данных</td></tr>";
         console.error(e);
       } finally {
         hideLoader();
       }
     }
 
-    async function updateSheet(rowNumber, doneByValue) {
+    async function updateSheet(rowNumber, doneByValue, breakdownValue) {
       showLoader();
       try {
         const params = new URLSearchParams({
           action: 'update',
           rowNumber,
-          doneByValue
+          doneByValue,
+          breakdownValue
         });
         const response = await fetch(`${GAS_URL}?${params.toString()}`);
         if (!response.ok) throw new Error('Network response was not ok');
@@ -710,8 +712,8 @@ BLOCKBUSTER
 
         // После обновления снова сортируем данные
         fullData.sort((a, b) => {
-          const aIsOpen = !a[5];
-          const bIsOpen = !b[5];
+          const aIsOpen = !a[5] || !a[6];
+          const bIsOpen = !b[5] || !b[6];
           
           if (aIsOpen && !bIsOpen) return -1;
           if (!aIsOpen && bIsOpen) return 1;
@@ -760,6 +762,15 @@ BLOCKBUSTER
           <td data-label="МАШИНА">${row[1]}</td>
           <td data-label="ОТКРЫТА">${row[3]}</td>
           <td data-label="ЗАКРЫТА">${row[4]}</td>
+          ${row[6]
+            ? `<td data-label="ПОЛОМКА">${row[6]}</td>`
+            : `<td data-label="ПОЛОМКА" id="iText_${row[0]}">
+                <select id="i_${row[0]}">
+                  <option value="" selected disabled></option>
+                  <option value="ЕСТЬ">ЕСТЬ</option>
+                  <option value="НЕТ">НЕТ</option>
+                </select>
+              </td>`}
           ${row[5]
             ? `<td data-label="ВЫПОЛНИЛ">${row[5]}</td>`
             : `<td data-label="ВЫПОЛНИЛ" id="gText_${row[0]}">
@@ -772,7 +783,7 @@ BLOCKBUSTER
           <td data-label="ОТПРАВИТЬ">
             <div class="buttons-row">
               ${schemaLink}
-              ${row[5]
+              ${row[5] && row[6]
                 ? `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`
                 : `<button id="btn_${row[0]}" onclick="validateAndSend(${row[0]});">
                      <i class="fas fa-paper-plane"></i>Отправить
@@ -808,17 +819,18 @@ BLOCKBUSTER
 
     function validateAndSend(rowNumber) {
       const gSelect = document.getElementById(`g_${rowNumber}`);
+      const iSelect = document.getElementById(`i_${rowNumber}`);
       const btn = document.getElementById(`btn_${rowNumber}`);
 
-      if (!gSelect || !gSelect.value) {
-        alert("Выберите механика!");
+      if (!gSelect || !iSelect || !gSelect.value || !iSelect.value) {
+        alert("Заполните все формы!");
         return;
       }
 
       // Сохраняем текущую позицию прокрутки
       const scrollPosition = window.scrollY || document.documentElement.scrollTop;
       
-      updateSheet(rowNumber, gSelect.value).then(() => {
+      updateSheet(rowNumber, gSelect.value, iSelect.value).then(() => {
         // Восстанавливаем позицию прокрутки после обновления
         window.scrollTo(0, scrollPosition);
       });
@@ -847,23 +859,36 @@ BLOCKBUSTER
           row.cells[2].textContent = rowData[3];
           row.cells[3].textContent = rowData[4];
           
-          if (rowData[5]) {
-            row.cells[4].innerHTML = rowData[5];
+          if (rowData[6]) {
+            row.cells[4].innerHTML = rowData[6];
             row.cells[4].id = "";
           } else {
             row.cells[4].innerHTML = `
-              <select id="g_${rowData[0]}">
+              <select id="i_${rowData[0]}">
                 <option value="" selected disabled></option>
-                <option value="МЕХАНИК(1)">МЕХАНИК(1)</option>
-                <option value="МЕХАНИК(2)">МЕХАНИК(2)</option>
+                <option value="ЕСТЬ">ЕСТЬ</option>
+                <option value="НЕТ">НЕТ</option>
               </select>`;
-            row.cells[4].id = `gText_${rowData[0]}`;
+            row.cells[4].id = `iText_${rowData[0]}`;
           }
           
-          const buttonsRow = row.cells[5].querySelector('.buttons-row');
+          if (rowData[5]) {
+            row.cells[5].innerHTML = rowData[5];
+            row.cells[5].id = "";
+          } else {
+            row.cells[5].innerHTML = `
+              <select id="g_${rowData[0]}">
+                <option value="" selected disabled></option>
+                <option value="МЕХАНИК(1)">МЕХаНИК(1)</option>
+                <option value="МЕХАНИК(2)">МЕХаНИК(2)</option>
+              </select>`;
+            row.cells[5].id = `gText_${rowData[0]}`;
+          }
+          
+          const buttonsRow = row.cells[6].querySelector('.buttons-row');
           buttonsRow.innerHTML = `
             ${schemaLink}
-            ${rowData[5]
+            ${rowData[5] && rowData[6]
               ? `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`
               : `<button id="btn_${rowData[0]}" onclick="validateAndSend(${rowData[0]});">
                    <i class="fas fa-paper-plane"></i>Отправить
@@ -965,7 +990,7 @@ BLOCKBUSTER
     }
 
     function updateOpenTaskCard(data) {
-      const openCount = data.filter(row => !row[5]).length;
+      const openCount = data.filter(row => !row[5] || !row[6]).length;
       document.getElementById("openTaskCount").textContent = openCount;
     }
   </script>
