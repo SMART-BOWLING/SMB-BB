@@ -191,7 +191,7 @@
 
     .mechanics-rating {
       background-color: #fff;
-      margin: 15px auto 0px;
+      margin: 15px auto;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       width: 84%;
@@ -209,37 +209,13 @@
       padding-bottom: 8px;
     }
 
-    .previous-winner {
-      background: linear-gradient(135deg, #ffd700, #ffed4e);
-      margin: 10px auto 0px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      width: 84%;
-      max-width: 500px;
-      padding: 12px 15px;
-      box-sizing: border-box;
+    .winner-section h3 {
+      margin: 20px 0 12px 0;
       text-align: center;
-    }
-
-    .previous-winner h4 {
-      margin: 0 0 8px 0;
       color: #1a2f40;
-      font-size: 14px;
-    }
-
-    .winner-info {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      color: #1a2f40;
-    }
-
-    .crown-icon {
-      color: #ffd700;
-      font-size: 18px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      font-size: 16px;
+      border-bottom: 2px solid #dc143c;
+      padding-bottom: 8px;
     }
 
     .rating-item {
@@ -254,12 +230,35 @@
       border-bottom: none;
     }
 
+    .winner-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+
     .mechanic-name {
       font-weight: 600;
       color: #1a2f40;
     }
 
+    .winner-name {
+      font-weight: 600;
+      color: #1a2f40;
+    }
+
     .task-count {
+      background-color: #dc143c;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .winner-count {
       background-color: #dc143c;
       color: white;
       padding: 4px 10px;
@@ -276,6 +275,12 @@
       gap: 8px;
     }
 
+    .winner-place {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .place-badge {
       width: 24px;
       height: 24px;
@@ -286,6 +291,11 @@
       font-weight: 700;
       font-size: 12px;
       color: white;
+    }
+
+    .wrench-icon {
+      color: #1a2f40;
+      font-size: 16px;
     }
 
     .place-1 {
@@ -646,11 +656,11 @@ BLOCKBUSTER
   <div class="mechanics-rating" id="mechanicsRating" style="display: none;">
     <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
     <div id="ratingContent"></div>
-  </div>
-
-  <div class="previous-winner" id="previousWinner" style="display: none;">
-    <h4><i class="fas fa-crown"></i> Победитель прошлого месяца</h4>
-    <div id="winnerContent"></div>
+    
+    <div class="winner-section">
+      <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
+      <div id="winnerContent"></div>
+    </div>
   </div>
 
   <div id="app-content" style="display:none;">
@@ -824,7 +834,6 @@ BLOCKBUSTER
     function updateMechanicsRating(data) {
       const ratingContainer = document.getElementById('mechanicsRating');
       const ratingContent = document.getElementById('ratingContent');
-      const previousWinnerContainer = document.getElementById('previousWinner');
       const winnerContent = document.getElementById('winnerContent');
       
       const currentDate = new Date();
@@ -925,17 +934,17 @@ BLOCKBUSTER
       
       if (previousMonthArray.length > 0 && previousMonthArray[0].count > 0) {
         const winner = previousMonthArray[0];
-        previousWinnerContainer.style.display = 'block';
         winnerContent.innerHTML = `
-          <div class="winner-info">
-            <i class="fas fa-crown crown-icon"></i>
-            <span>${winner.name}</span>
-            <span>(${winner.count} задач)</span>
+          <div class="winner-item">
+            <div class="winner-place">
+              <i class="fas fa-wrench wrench-icon"></i>
+              <span class="winner-name">${winner.name}</span>
+            </div>
+            <div class="winner-count">${winner.count}</div>
           </div>
         `;
       } else {
-        previousWinnerContainer.style.display = 'block';
-        winnerContent.innerHTML = `<div style="text-align: center; color: #666;">Нет данных за ${monthNames[prevMonth]}</div>`;
+        winnerContent.innerHTML = `<div style="text-align: center; color: #666; padding: 8px 0;">Нет данных за ${monthNames[prevMonth]}</div>`;
       }
     }
 
