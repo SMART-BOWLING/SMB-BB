@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -173,7 +173,7 @@
       font-size: 16px;
     }
 
-    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ПЛАШЕК - ОДИНАКОВАЯ ШИРИНА */
+    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ПЛАШЕК */
     .mechanics-rating {
       background-color: #fff;
       margin: 80px auto 15px;
@@ -1201,76 +1201,33 @@ BLOCKBUSTER
       addPageButton(1, pageContainer);
       
       if (currentPage > 3 && totalPages > 3) {
-        const ellipsis = = document.createElement document.createElement("span");
-       ("span");
-        ellipsis.className = "ellipsis ellipsis.className = "ellipsis";
-        ellips";
-        ellipsis.textis.textContent = "...";
-Content = "...";
-        pageContainer.appendChild(ellipsis        pageContainer.appendChild(ellipsis);
-      }
-      
-);
-      }
-      
-      if      if (currentPage > (currentPage > 1 && currentPage < totalPages 1 && currentPage < totalPages) {
-) {
-        addPageButton(current        addPageButton(currentPagePage, pageContainer);
-, pageContainer);
-      }
-      
-      if (currentPage      }
-      
-      if (currentPage < totalPages - 2 < totalPages - 2 && totalPages > 3 && totalPages > 3) {
-        const ellipsis = document.createElement("span) {
         const ellipsis = document.createElement("span");
-        ellipsis.class");
-        ellipsis.className = "ellipsisName = "ellipsis";
-        ellipsis.text";
+        ellipsis.className = "ellipsis";
         ellipsis.textContent = "...";
-       Content = "...";
-        page pageContainer.appendChild(ellipsContainer.appendChild(ellipsis);
-     is);
+        pageContainer.appendChild(ellipsis);
       }
       
- }
+      if (currentPage > 1 && currentPage < totalPages) {
+        addPageButton(currentPage, pageContainer);
+      }
       
-           if (totalPages > 1) {
-        addPageButton(totalPages, pageContainer);
- if (totalPages > 1) {
+      if (currentPage < totalPages - 2 && totalPages > 3) {
+        const ellipsis = document.createElement("span");
+        ellipsis.className = "ellipsis";
+        ellipsis.textContent = "...";
+        pageContainer.appendChild(ellipsis);
+      }
+      
+      if (totalPages > 1) {
         addPageButton(totalPages, pageContainer);
       }
     }
 
     function addPageButton(pageNumber, container) {
-      const btn      }
-    }
-
-    function addPageButton(pageNumber, container) {
-      const = document.createElement("button");
-      btn.textContent = pageNumber;
-      if (pageNumber === currentPage) btn.classList.add("active");
-      btn.onclick = btn = document.createElement("button");
+      const btn = document.createElement("button");
       btn.textContent = pageNumber;
       if (pageNumber === currentPage) btn.classList.add("active");
       btn.onclick = () => {
-        currentPage = pageNumber;
-        renderPage(currentPage, true);
-      };
-      container.appendChild(btn);
-    }
-
-    function prevPage() {
-      if (currentPage > 1) {
-        currentPage--;
-        renderPage(currentPage, true);
-      }
-    }
-
-    function nextPage() {
-      if (currentPage * rowsPerPage < fullData.length) {
-        currentPage++;
-        render () => {
         currentPage = pageNumber;
         renderPage(currentPage, true);
       };
