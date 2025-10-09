@@ -173,10 +173,8 @@
       font-size: 16px;
     }
 
-    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ВСЕХ КАРТОЧЕК - ОДИНАКОВАЯ ШИРИНА */
-    .mechanics-rating,
-    .winner-section,
-    .task-summary-card {
+    /* ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ВСЕХ КАРТОЧЕК - ОДИНАКОВАЯ ШИРИНА */
+    .card {
       background-color: #fff;
       margin: 15px auto;
       border-radius: 12px;
@@ -187,12 +185,29 @@
       box-sizing: border-box;
     }
 
-    /* Первая карточка рейтинга механиков должна иметь отступ сверху для header */
     .mechanics-rating {
       margin-top: 80px;
     }
 
-    .mechanics-rating h3,
+    .task-summary-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #000;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 12px 16px;
+    }
+
+    .mechanics-rating h3 {
+      margin: 0 0 12px 0;
+      text-align: center;
+      color: #1a2f40;
+      font-size: 16px;
+      border-bottom: 2px solid #dc143c;
+      padding-bottom: 8px;
+    }
+
     .winner-section h3 {
       margin: 0 0 12px 0;
       text-align: center;
@@ -231,7 +246,17 @@
       color: #1a2f40;
     }
 
-    .task-count,
+    .task-count {
+      background-color: #dc143c;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 30px;
+      text-align: center;
+    }
+
     .winner-count {
       background-color: #dc143c;
       color: white;
@@ -243,7 +268,12 @@
       text-align: center;
     }
 
-    .rating-place,
+    .rating-place {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .winner-place {
       display: flex;
       align-items: center;
@@ -617,20 +647,18 @@ BLOCKBUSTER
     </div>
   </header>
 
-  <!-- ОБНОВЛЕННАЯ СТРУКТУРА РЕЙТИНГА МЕХАНИКОВ -->
-  <div class="mechanics-rating" id="mechanicsRating" style="display: none;">
+  <!-- ИСПРАВЛЕННАЯ СТРУКТУРА С ОДИНАКОВЫМИ КЛАССАМИ -->
+  <div class="card mechanics-rating" id="mechanicsRating" style="display: none;">
     <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
     <div id="ratingContent"></div>
   </div>
 
-  <!-- НОВАЯ ОТДЕЛЬНАЯ КАРТОЧКА ДЛЯ ПОБЕДИТЕЛЯ -->
-  <div class="winner-section" id="winnerSection" style="display: none;">
+  <div class="card winner-section" id="winnerSection" style="display: none;">
     <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
     <div id="winnerContent"></div>
   </div>
 
-  <!-- ПЛАШКА ОТКРЫТЫХ ЗАДАЧ -->
-  <div class="task-summary-card">
+  <div class="card task-summary-card">
     <div>Открытых задач</div>
     <div id="openTaskCount">0</div>
   </div>
