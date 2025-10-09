@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -173,7 +173,7 @@
       font-size: 16px;
     }
 
-    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ПЛАШЕК */
+    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ПЛАШЕК - ДОБАВЛЕНА ЕДИНАЯ ШИРИНА */
     .mechanics-rating {
       background-color: #fff;
       margin: 80px auto 15px;
@@ -197,8 +197,9 @@
       margin: 15px auto;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      width: 84%;
-      max-width: 500px;
+      width: 84%; /* Одинаковая ширина с mechanics-rating */
+      max-width: 500px; /* Одинаковая максимальная ширина */
+      box-sizing: border-box; /* Важно для правильного расчета ширины */
     }
 
     .mechanics-rating h3 {
@@ -612,6 +613,39 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* ДОБАВЛЕННЫЕ СТИЛИ ДЛЯ ВЫРАВНИВАНИЯ ШИРИНЫ КАРТОЧЕК */
+    .card-container {
+      width: 84%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Обеспечиваем одинаковую ширину для всех основных блоков контента */
+    .mechanics-rating,
+    .task-summary-card,
+    #app-content {
+      width: 84%;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Уточняем отступы для правильного расположения */
+    .mechanics-rating {
+      margin-top: 80px;
+      margin-bottom: 15px;
+    }
+
+    .task-summary-card {
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+
+    #app-content {
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
   </style>
 </head>
 <body>
@@ -690,6 +724,7 @@ BLOCKBUSTER
   </div>
 
   <script>
+    // JavaScript код остается без изменений
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec';
     const allowedEmails = ["vadiksss900@gmail.com", "sasha380sheyd@gmail.com"];
 
