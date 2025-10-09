@@ -173,30 +173,44 @@
       font-size: 16px;
     }
 
-    /* ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ ВСЕХ КАРТОЧЕК - ОДИНАКОВАЯ ШИРИНА */
-    .card {
+    /* ОБЩИЕ СТИЛИ ДЛЯ ВСЕХ КАРТОЧЕК - ОДИНАКОВАЯ ШИРИНА КАК У КАРТОЧЕК ЗАДАЧ */
+    .mechanics-rating {
       background-color: #fff;
-      margin: 15px auto;
+      margin: 80px auto 15px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      width: 84%;
+      width: 96%;
       max-width: 500px;
       padding: 15px;
       box-sizing: border-box;
-    }
-
-    .mechanics-rating {
-      margin-top: 80px;
     }
 
     .task-summary-card {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #fff;
       color: #000;
       font-weight: 700;
       font-size: 16px;
       padding: 12px 16px;
+      margin: 15px auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      width: 96%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+
+    .winner-section {
+      background-color: #fff;
+      margin: 15px auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      width: 96%;
+      max-width: 500px;
+      padding: 15px;
+      box-sizing: border-box;
     }
 
     .mechanics-rating h3 {
@@ -347,6 +361,7 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      width: 100%;
     }
 
     tbody tr::before {
@@ -647,18 +662,18 @@ BLOCKBUSTER
     </div>
   </header>
 
-  <!-- ИСПРАВЛЕННАЯ СТРУКТУРА С ОДИНАКОВЫМИ КЛАССАМИ -->
-  <div class="card mechanics-rating" id="mechanicsRating" style="display: none;">
+  <!-- КАРТОЧКИ С ОДИНАКОВОЙ ШИРИНОЙ -->
+  <div class="mechanics-rating" id="mechanicsRating" style="display: none;">
     <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
     <div id="ratingContent"></div>
   </div>
 
-  <div class="card winner-section" id="winnerSection" style="display: none;">
+  <div class="winner-section" id="winnerSection" style="display: none;">
     <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
     <div id="winnerContent"></div>
   </div>
 
-  <div class="card task-summary-card">
+  <div class="task-summary-card">
     <div>Открытых задач</div>
     <div id="openTaskCount">0</div>
   </div>
