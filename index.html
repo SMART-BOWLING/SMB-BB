@@ -173,7 +173,7 @@
       font-size: 16px;
     }
 
-    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ПЛАШЕК - ДОБАВЛЕНА ЕДИНАЯ ШИРИНА */
+    /* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ПЛАШЕК - ОДИНАКОВАЯ ШИРИНА */
     .mechanics-rating {
       background-color: #fff;
       margin: 80px auto 15px;
@@ -197,9 +197,21 @@
       margin: 15px auto;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      width: 84%; /* Одинаковая ширина с mechanics-rating */
-      max-width: 500px; /* Одинаковая максимальная ширина */
-      box-sizing: border-box; /* Важно для правильного расчета ширины */
+      width: 84%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+
+    /* ДОБАВЛЕНЫ СТИЛИ ДЛЯ СЕКЦИИ ПОБЕДИТЕЛЯ */
+    .winner-section {
+      background-color: #fff;
+      margin: 15px auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      width: 84%;
+      max-width: 500px;
+      padding: 15px;
+      box-sizing: border-box;
     }
 
     .mechanics-rating h3 {
@@ -212,7 +224,7 @@
     }
 
     .winner-section h3 {
-      margin: 20px 0 12px 0;
+      margin: 0 0 12px 0;
       text-align: center;
       color: #1a2f40;
       font-size: 16px;
@@ -613,39 +625,6 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-
-    /* ДОБАВЛЕННЫЕ СТИЛИ ДЛЯ ВЫРАВНИВАНИЯ ШИРИНЫ КАРТОЧЕК */
-    .card-container {
-      width: 84%;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    /* Обеспечиваем одинаковую ширину для всех основных блоков контента */
-    .mechanics-rating,
-    .task-summary-card,
-    #app-content {
-      width: 84%;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Уточняем отступы для правильного расположения */
-    .mechanics-rating {
-      margin-top: 80px;
-      margin-bottom: 15px;
-    }
-
-    .task-summary-card {
-      margin-top: 15px;
-      margin-bottom: 15px;
-    }
-
-    #app-content {
-      margin-top: 20px;
-      margin-bottom: 40px;
-    }
   </style>
 </head>
 <body>
@@ -683,18 +662,19 @@ BLOCKBUSTER
     </div>
   </header>
 
-  <!-- ПЕРЕНЕСЕН РЕЙТИНГ МЕХАНИКОВ ВВЕРХ -->
+  <!-- ОБНОВЛЕННАЯ СТРУКТУРА РЕЙТИНГА МЕХАНИКОВ -->
   <div class="mechanics-rating" id="mechanicsRating" style="display: none;">
     <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
     <div id="ratingContent"></div>
-    
-    <div class="winner-section">
-      <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
-      <div id="winnerContent"></div>
-    </div>
   </div>
 
-  <!-- ПЕРЕНЕСЕНА ПЛАШКА ОТКРЫТЫХ ЗАДАЧ ВНИЗ -->
+  <!-- НОВАЯ ОТДЕЛЬНАЯ КАРТОЧКА ДЛЯ ПОБЕДИТЕЛЯ -->
+  <div class="winner-section" id="winnerSection" style="display: none;">
+    <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
+    <div id="winnerContent"></div>
+  </div>
+
+  <!-- ПЛАШКА ОТКРЫТЫХ ЗАДАЧ -->
   <div class="task-summary-card">
     <div>Открытых задач</div>
     <div id="openTaskCount">0</div>
@@ -724,7 +704,6 @@ BLOCKBUSTER
   </div>
 
   <script>
-    // JavaScript код остается без изменений
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec';
     const allowedEmails = ["vadiksss900@gmail.com", "sasha380sheyd@gmail.com"];
 
@@ -871,6 +850,7 @@ BLOCKBUSTER
 
     function updateMechanicsRating(data) {
       const ratingContainer = document.getElementById('mechanicsRating');
+      const winnerContainer = document.getElementById('winnerSection');
       const ratingContent = document.getElementById('ratingContent');
       const winnerContent = document.getElementById('winnerContent');
       
@@ -971,6 +951,7 @@ BLOCKBUSTER
       previousMonthArray.sort((a, b) => b.count - a.count);
       
       if (previousMonthArray.length > 0 && previousMonthArray[0].count > 0) {
+        winnerContainer.style.display = 'block';
         const winner = previousMonthArray[0];
         winnerContent.innerHTML = `
           <div class="winner-item">
@@ -982,6 +963,7 @@ BLOCKBUSTER
           </div>
         `;
       } else {
+        winnerContainer.style.display = 'block';
         winnerContent.innerHTML = `<div style="text-align: center; color: #666; padding: 8px 0;">Нет данных за ${monthNames[prevMonth]}</div>`;
       }
     }
