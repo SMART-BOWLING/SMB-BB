@@ -701,6 +701,13 @@ BLOCKBUSTER
   </div>
 
   <script>
+    // Принудительное использование HTTPS
+    (function() {
+      if (window.location.protocol === 'http:' && !window.location.hostname.includes('localhost')) {
+        window.location.href = 'https:' + window.location.href.substring(5);
+      }
+    })();
+
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec';
     const allowedEmails = ["vadiksss900@gmail.com", "sasha380sheyd@gmail.com", "bowlingblock.b@gmail.com", "glusenkoaleksandr2907@gmail.com"];
 
