@@ -4,6 +4,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SMB BB</title>
+  
+  <!-- ===================== ССЫЛКИ ДЛЯ УДОБНОГО ИЗМЕНЕНИЯ ===================== -->
+  <script>
+    // ============== ССЫЛКИ НА ИКОНКИ И ШРИФТЫ ==============
+    const LINKS = {
+      // Иконка сайта (favicon)
+      FAVICON: "https://i.postimg.cc/dtSpKx0W/1.png",
+      
+      // Логотип в шапке
+      LOGO: "https://i.postimg.cc/wjGzSY92/1.png",
+      
+      // Шрифты
+      FONT_AWESOME: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+      GOOGLE_FONT: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap",
+      
+      // ============== ССЫЛКИ НА ПРОЕКТЫ В ВЫПАДАЮЩЕМ МЕНЮ ==============
+      PROJECTS: {
+        // Проекты в основном выпадающем меню (Site Name Dropdown)
+        SKYMALL: {
+          NAME: "SKYMALL",
+          URL: "https://smart-bowling.github.io/SMB-SKYMALL/"
+        },
+        LUCKY_STRIKE_KH: {
+          NAME: "LUCKY STRIKE KH",
+          URL: "https://smart-bowling.github.io/SMB-LS-KH/"
+        }
+      },
+      
+      // ============== ССЫЛКИ В МЕНЮ (Dropdown Menu) ==============
+      MENU_LINKS: [
+        {
+          NAME: "ДЕТАЛИ",
+          URL: "https://smart-bowling.github.io/PARTS-BB/",
+          ICON: "fas fa-cube"
+        },
+        {
+          NAME: "STOP LANE",
+          URL: "https://smart-bowling.github.io/PS-STOP-BB/",
+          ICON: "fas fa-exclamation-triangle"
+        }
+      ],
+      
+      // ============== API И АУТЕНТИФИКАЦИЯ ==============
+      GAS_URL: "https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec",
+      GOOGLE_CLIENT_ID: "328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com",
+      
+      // ============== РАЗРЕШЕННЫЕ EMAIL ==============
+      ALLOWED_EMAILS: [
+        "vadiksss900@gmail.com",
+        "sasha380sheyd@gmail.com",
+        "bowlingblock.b@gmail.com",
+        "glusenkoaleksandr2907@gmail.com"
+      ]
+    };
+  </script>
+  <!-- ===================== КОНЕЦ ССЫЛОК ===================== -->
+  
   <link rel="icon" type="image/png" href="https://i.postimg.cc/dtSpKx0W/1.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -772,24 +829,14 @@
     <div class="site-name" onclick="toggleSiteNameDropdown()">
 BLOCKBUSTER
       <div class="site-name-dropdown" id="siteNameDropdown">
-        <a href="https://smart-bowling.github.io/SMB-SKYMALL/" class="dropdown-button">
-          <span>SKYMALL</span>
-        </a>
-                <a href="https://smart-bowling.github.io/SMB-LS-KH/" class="dropdown-button">
-          <span>LUCKY STRIKE KH</span>
-        </a>
+        <!-- Проекты будут добавлены через JavaScript -->
       </div>
     </div>
     <div class="menu-button" onclick="toggleDropdown()">
       <div></div><div></div><div></div>
     </div>
     <div class="dropdown" id="dropdownMenu">
-      <a href="https://smart-bowling.github.io/PARTS-BB/">
-        <span class="icon-space"><i class="fas fa-cube"></i></span>ДЕТАЛИ
-      </a>
-<a href="https://smart-bowling.github.io/PS-STOP-BB/">
-  <span class="icon-space"><i class="fas fa-exclamation-triangle"></i></span>STOP LANE
-</a>
+      <!-- Меню будет добавлено через JavaScript -->
     </div>
   </header>
 
@@ -843,6 +890,45 @@ BLOCKBUSTER
   </div>
 
   <script>
+    // ===================== ИСПОЛЬЗОВАНИЕ ССЫЛОК ИЗ КОНСТАНТ =====================
+    // Обновляем ссылки на основе констант
+    document.querySelector('link[rel="icon"]').href = LINKS.FAVICON;
+    document.querySelector('.logo img').src = LINKS.LOGO;
+
+    // Заполняем выпадающее меню проектами
+    function populateProjectsDropdown() {
+      const siteNameDropdown = document.getElementById('siteNameDropdown');
+      siteNameDropdown.innerHTML = '';
+      
+      // Добавляем проекты
+      for (const key in LINKS.PROJECTS) {
+        const project = LINKS.PROJECTS[key];
+        const link = document.createElement('a');
+        link.href = project.URL;
+        link.className = 'dropdown-button';
+        link.innerHTML = `<span>${project.NAME}</span>`;
+        siteNameDropdown.appendChild(link);
+      }
+    }
+
+    // Заполняем меню ссылками
+    function populateMenuLinks() {
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      dropdownMenu.innerHTML = '';
+      
+      // Добавляем ссылки из меню
+      LINKS.MENU_LINKS.forEach(link => {
+        const menuItem = document.createElement('a');
+        menuItem.href = link.URL;
+        menuItem.innerHTML = `
+          <span class="icon-space"><i class="${link.ICON}"></i></span>${link.NAME}
+        `;
+        dropdownMenu.appendChild(menuItem);
+      });
+    }
+
+    // ===================== ОСНОВНОЙ КОД =====================
+    
     // Принудительное использование HTTPS
     (function() {
       if (window.location.protocol === 'http:' && !window.location.hostname.includes('localhost')) {
@@ -850,8 +936,8 @@ BLOCKBUSTER
       }
     })();
 
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec';
-    const allowedEmails = ["vadiksss900@gmail.com", "sasha380sheyd@gmail.com", "bowlingblock.b@gmail.com", "glusenkoaleksandr2907@gmail.com"];
+    const GAS_URL = LINKS.GAS_URL;
+    const allowedEmails = LINKS.ALLOWED_EMAILS;
 
     let fullData = [];
     let filteredData = [];
@@ -867,6 +953,10 @@ BLOCKBUSTER
     let isRatingVisible = false;
 
     document.addEventListener('DOMContentLoaded', function() {
+      // Заполняем меню
+      populateProjectsDropdown();
+      populateMenuLinks();
+      
       checkAuth();
       
       if (window.location.hash) {
@@ -900,7 +990,7 @@ BLOCKBUSTER
     }
 
     function googleAuth() {
-      const clientId = '328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com';
+      const clientId = LINKS.GOOGLE_CLIENT_ID;
       const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
       const scope = encodeURIComponent('email profile');
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
