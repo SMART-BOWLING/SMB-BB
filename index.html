@@ -1,52 +1,14 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <title>ДЕТАЛИ BB</title>
   <link rel="icon" type="image/png" href="https://i.postimg.cc/dtSpKx0W/1.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Identity Script -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    /* НОВАЯ АНИМАЦИЯ ЗАГРУЗКИ */
-    .loading-screen {
-      position: fixed;
-      inset: 0;
-      background: #1f2937;
-      display: none; /* Управляется через JS */
-      justify-content: center;
-      align-items: center;
-      z-index: 99999;
-    }
-
-    .logo-wrapper {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .glow-ring {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border-radius: 100%;
-      background: conic-gradient(#dc143c, transparent 100%);
-      animation: loader-spin 5s linear infinite;
-      filter: blur(20px);
-    }
-
-    .loading-screen img {
-      width: 120px;
-      z-index: 2;
-    }
-
-    @keyframes loader-spin {
-      to { transform: rotate(365deg); }
-    }
-
-    /* ОСТАЛЬНЫЕ СТИЛИ БЕЗ ИЗМЕНЕНИЙ */
+    /* Стили для выпадающего списка KH */
     .site-name-dropdown {
       position: relative;
       display: inline-block;
@@ -65,6 +27,7 @@
       height: 100%;
     }
     
+    /* Базовые стили для надписи KH */
     .site-name-text {
       margin: 0;
       padding: 0;
@@ -75,7 +38,7 @@
     .dropdown-sites {
       display: none;
       position: absolute;
-      top: calc(100% + 50px);
+      top: calc(100% + 50px); /* Опускаем ниже шапки */
       left: 50%;
       transform: translateX(-50%);
       background-color: #1f2937;
@@ -97,7 +60,7 @@
       text-decoration: none;
       transition: background 0.3s;
       text-align: center;
-      white-space: nowrap;
+      white-space: nowrap; /* 🚫 запрещаем перенос */
     }
     
     .dropdown-sites a:hover {
@@ -177,6 +140,7 @@
       font-size: 24px;
     }
 
+    /* Стили для авторизации */
     #login {
       position: fixed;
       top: 0;
@@ -215,6 +179,7 @@
       font-family: Arial, sans-serif;
     }
 
+    /* ИСПРАВЛЕНО: Убраны зазоры между кнопками */
     .top-controls {
       display: flex;
       flex-wrap: nowrap;
@@ -423,6 +388,7 @@
       right: 8px;
     }
 
+    /* Стили для названия детали */
     .part-name-container {
       display: flex;
       align-items: center;
@@ -433,6 +399,10 @@
       min-height: 60px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       transition: all 0.2s ease;
+    }
+
+    .part-name-container.editing {
+      padding: 0 8px;
     }
 
     .part-name-text {
@@ -460,12 +430,13 @@
       font-family: inherit;
     }
 
-    .part-name-edit-btn, .part-name-save-btn, .part-name-cancel-btn {
+    .part-name-edit-btn {
       width: 44px;
       height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #dc143c;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -476,21 +447,68 @@
       flex-shrink: 0;
     }
 
-    .part-name-edit-btn { background: #dc143c; }
-    .part-name-save-btn { background: #2a3648; }
-    .part-name-cancel-btn { background: #dc143c; }
+    .part-name-edit-btn:hover {
+      background: #ff1940;
+      transform: scale(1.05);
+    }
 
+    .part-name-save-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #2a3648;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #fff;
+      transition: all 0.2s ease;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .part-name-save-btn:hover {
+      background: #34ce57;
+      transform: scale(1.05);
+    }
+
+    .part-name-cancel-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #dc143c;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #fff;
+      transition: all 0.2s ease;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .part-name-cancel-btn:hover {
+      background: #5a6268;
+      transform: scale(1.05);
+    }
+
+    /* ИСПРАВЛЕНО: Контролы карточки - компактнее */
     .controls {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: nowrap; /* Запрещаем перенос */
       align-items: center;
       justify-content: space-between;
       margin-top: 16px;
-      gap: 6px;
+      gap: 6px; /* Уменьшаем зазор */
       padding: 8px 0;
-      overflow: hidden;
+      overflow: hidden; /* Скрываем переполнение */
     }
 
+    /* Стили для подложки номера детали (pill) */
     .pill {
       background: #fff;
       border-radius: 20px;
@@ -512,40 +530,85 @@
     }
 
     .controls input {
-      width: 50px;
-      height: 50px;
-      padding: 0 8px;
+      width: 50px; /* Уменьшаем ширину */
+      height: 50px; /* Уменьшаем высоту */
+      padding: 0 8px; /* Уменьшаем отступы */
       border: none;
       border-radius: 12px;
       text-align: center;
       background: #fff;
-      font-size: 18px;
+      font-size: 18px; /* Уменьшаем шрифт */
       font-weight: bold;
       flex-shrink: 0;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
       min-width: 50px;
     }
 
+    .controls input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.3);
+    }
+
     .btn {
-      height: 50px;
-      padding: 0 15px;
+      height: 50px; /* Уменьшаем высоту */
+      padding: 0 15px; /* Уменьшаем отступы */
       border: none;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 16px; /* Уменьшаем шрифт */
       font-weight: bold;
       cursor: pointer;
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 6px; /* Уменьшаем зазор */
       transition: all 0.2s ease;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       white-space: nowrap;
+      min-width: 0;
     }
 
-    .btn-add { background: linear-gradient(to bottom, #1f2937, #0d1520); color: #fff; min-width: 120px; }
-    .btn-info { background: linear-gradient(to bottom, #ffffff, #f0f0f0); color: #000; min-width: 50px; justify-content: center; }
-    .btn-take { background: linear-gradient(to bottom, #dc143c, #b01030); color: #fff; min-width: 120px; }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-add {
+      background: linear-gradient(to bottom, #1f2937, #0d1520);
+      color: #fff;
+      min-width: 120px; /* Уменьшаем минимальную ширину */
+    }
+
+    .btn-add:hover {
+      background: linear-gradient(to bottom, #2a3648, #111b29);
+    }
+
+    .btn-info {
+      background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+      color: #000;
+      min-width: 50px; /* Уменьшаем минимальную ширину */
+      padding: 0 10px; /* Уменьшаем отступы */
+      justify-content: center;
+    }
+
+    .btn-info:hover {
+      background: linear-gradient(to bottom, #ffffff, #e8e8e8);
+    }
+
+    .btn-take {
+      background: linear-gradient(to bottom, #dc143c, #b01030);
+      color: #fff;
+      min-width: 120px; /* Уменьшаем минимальную ширину */
+    }
+
+    .btn-take:hover {
+      background: linear-gradient(to bottom, #e51c47, #c01238);
+    }
 
     .modal-overlay {
       position: fixed;
@@ -576,8 +639,14 @@
     }
 
     @keyframes modalAppear {
-      from { opacity: 0; transform: translateY(30px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .modal-close {
@@ -588,16 +657,44 @@
       font-size: 40px;
       font-weight: bold;
       color: #dc143c;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      color: #ff1940;
+      transform: scale(1.1);
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      font-size: 24px;
+      color: #1a2f40;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f2f5;
+    }
+
+    .modal pre {
+      white-space: pre-wrap;
+      font-size: 26px;
+      line-height: 1.6;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #dc143c;
     }
 
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 50px auto;
+      margin: 50px 0;
       gap: 10px;
+      flex-wrap: nowrap;
+      width: 100%;
       max-width: 1300px;
+      margin: 50px auto;
       padding: 0 8px;
+      box-sizing: border-box;
     }
 
     .pagination button {
@@ -612,20 +709,67 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      transition: all 0.2s ease;
       min-width: 140px;
       height: 60px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .pagination button:hover:not(:disabled) {
+      background: linear-gradient(to bottom, #2a3648, #111b29);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+    }
+
+    .pagination button:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .pagination button:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .pagination button i {
+      font-size: 24px;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
     }
 
     .page-numbers button {
       min-width: 40px;
       height: 60px;
       padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 20px;
       border-radius: 16px;
       background: linear-gradient(to bottom, #dc143c, #b01030);
       color: white;
+      font-weight: 700;
       border: none;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .pagination button {
+      margin: 0 6px;
+    }
+
+    .page-numbers button:hover {
+      background: linear-gradient(to bottom, #e51c47, #c01238);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
 
     .page-numbers button.active {
@@ -633,42 +777,629 @@
       transform: scale(1.1);
     }
 
-    /* Мобильные адаптации */
-    @media (max-width: 1024px) {
-      .site-name-text { font-size: 50px; }
-      header { height: 140px; }
-      .pill { height: 60px; font-size: 20px; min-width: 100px; }
-      .controls input { width: 60px; height: 60px; font-size: 20px; }
-      .btn { height: 60px; font-size: 20px; }
+    .no-data {
+      padding: 20px;
+      text-align: center;
+      font-size: 18px;
+      color: #666;
     }
 
-    /* Десктопные адаптации */
+    /* Стили для индикатора загрузки */
+    .loader-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      display: none;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #dc143c;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Для мобильных устройств (max-width: 1024px) */
+    @media (max-width: 1024px) {
+      /* РАЗМЕР ШРИФТА ДЛЯ МОБИЛЬНЫХ - МОЖНО МЕНЯТЬ */
+      .site-name-text {
+        font-size: 50px; /* ← ИЗМЕНИ ЭТО ЧИСЛО ДЛЯ МОБИЛЬНЫХ */
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        line-height: 1.2;
+      }
+      
+      /* ИСПРАВЛЕНО: Выравнивание всей шапки для мобильных */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 30px;
+        height: 140px;
+      }
+      
+      .site-name {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+      }
+      
+      body {
+        padding: 20px;
+      }
+      
+      .cards.desktop-layout,
+      .card.desktop-layout {
+        width: 100% !important;
+        max-width: 900px !important;
+        margin: 0 auto !important;
+      }
+      
+      .cards.desktop-layout {
+        flex-direction: column !important;
+      }
+      
+      /* Контролы карточки для мобильных */
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 16px;
+        gap: 8px;
+        padding: 10px 0;
+      }
+      
+      /* Подложка номера детали для мобильных - делаем шире */
+      .pill {
+        background: #fff;
+        border-radius: 20px;
+        padding: 0 20px; /* Увеличиваем внутренние отступы */
+        font-size: 20px;
+        font-weight: bold;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 100px; /* Минимальная ширина больше */
+        max-width: 150px; /* Максимальная ширина больше */
+      }
+      
+      .controls input {
+        width: 60px;
+        height: 60px;
+        padding: 0 12px;
+        border: none;
+        border-radius: 16px;
+        text-align: center;
+        background: #fff;
+        font-size: 20px;
+        font-weight: bold;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+      }
+      
+      .btn {
+        height: 60px;
+        padding: 0 24px;
+        border: none;
+        border-radius: 16px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      
+      .btn-add {
+        background: linear-gradient(to bottom, #1f2937, #0d1520);
+        color: #fff;
+        min-width: 140px;
+      }
+      
+      .btn-info {
+        background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+        color: #000;
+        min-width: 60px;
+        justify-content: center;
+      }
+      
+      .btn-take {
+        background: linear-gradient(to bottom, #dc143c, #b01030);
+        color: #fff;
+        min-width: 140px;
+      }
+      
+      /* Часть названия детали */
+      .part-name-container {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+        padding: 0 12px;
+        background: #ffffff;
+        border-radius: 16px;
+        min-height: 60px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .part-name-text {
+        flex: 1;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: left;
+        padding: 16px 0;
+      }
+      
+      .part-name-edit-btn,
+      .part-name-save-btn,
+      .part-name-cancel-btn {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dc143c;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #fff;
+        margin-left: 8px;
+      }
+      
+      .part-name-input {
+        flex: 1;
+        height: 52px;
+        border: 2px solid #dc143c;
+        border-radius: 12px;
+        outline: none;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 0 12px;
+      }
+      
+      /* Верхние контролы для мобильных */
+      .top-controls {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 8px;
+        max-width: 900px;
+        margin: 0 auto 20px;
+        align-items: center;
+        padding-bottom: 8px;
+        box-sizing: border-box;
+        overflow-x: auto;
+      }
+      
+      .top-controls .btn-top {
+        height: 56px;
+        font-size: 18px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-grow: 1;
+        min-width: 90px;
+        max-width: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-family: inherit;
+        padding: 0 16px;
+        gap: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      
+      .select-wrapper {
+        position: relative;
+        min-width: 120px;
+        max-width: 150px;
+        height: 56px;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        flex-shrink: 0;
+      }
+      
+      /* Иконка удаления */
+      .media-block .icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dc143c;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #fff;
+        z-index: 2;
+      }
+      
+      /* Пагинация для мобильных */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 50px 0;
+        gap: 10px;
+        flex-wrap: nowrap;
+        width: 100%;
+        max-width: 900px;
+        margin: 50px auto;
+      }
+      
+      .pagination button {
+        padding: 18px 30px;
+        font-size: 20px;
+        min-width: 140px;
+        height: 60px;
+      }
+      
+      .page-numbers button {
+        min-width: 40px;
+        height: 60px;
+        padding: 0 20px;
+        font-size: 20px;
+      }
+      
+      /* Модальное окно для мобильных */
+      .modal {
+        padding: 40px;
+        width: 80vw;
+      }
+      
+      .modal pre {
+        font-size: 26px;
+        padding: 20px;
+      }
+      
+      .modal-close {
+        font-size: 40px;
+      }
+    }
+    
+    /* Стили для десктопной версии (1025px и выше) */
     @media (min-width: 1025px) {
-      header { height: 75px; padding: 4px 8px; }
-      .logo img { width: 50px; height: 50px; }
-      .site-name-text { font-size: 32px; }
-      #content { margin-top: 95px; }
-      .top-controls .btn-top, .select-wrapper { height: 34px; font-size: 12px; }
-      .cards.desktop-layout { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
-      .card.desktop-layout { width: calc((100% - 16px) / 3) !important; padding: 10px; }
-      .pill, .controls input, .btn { height: 30px; font-size: 11px; }
+      /* Уменьшаем шапку до минимума */
+      header {
+        height: 75px;
+        padding: 4px 8px;
+      }
+      
+      .logo img {
+        width: 50px;
+        height: 50px;
+      }
+      
+      /* РАЗМЕР ШРИФТА ДЛЯ ПК - МОЖНО МЕНЯТЬ */
+      .site-name-text {
+        font-size: 32px; /* ← ИЗМЕНИ ЭТО ЧИСЛО ДЛЯ ПК */
+        margin-bottom: 0;
+        line-height: 1.2;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        font-family: 'Arial', sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      
+      .menu-button {
+        width: 40px;
+        height: 28px;
+      }
+      
+      .menu-button div {
+        height: 3px;
+        border-radius: 2px;
+      }
+      
+      /* Корректируем положение выпадающих меню */
+      .dropdown {
+        top: 95px;
+        right: 8px;
+        min-width: 220px;
+        border-radius: 8px;
+        border-width: 1px;
+      }
+      
+      .dropdown a {
+        padding: 12px 15px;
+        font-size: 18px;
+      }
+      
+      .dropdown-sites {
+        min-width: 180px;
+        border-radius: 8px;
+        top: calc(100% + 20px);
+        border-width: 1px;
+      }
+      
+      .dropdown-sites a {
+        padding: 8px 40px;
+        font-size: 20px;
+      }
+      
+      /* Корректируем отступ контента */
+      #content {
+        margin-top: 95px;
+      }
+      
+      /* ИСПРАВЛЕНО: Уменьшаем боковые отступы на body */
+      body {
+        padding: 8px 4px;
+      }
+      
+      /* ИСПРАВЛЕНО: Верхние контролы - равномерное распределение */
+      .top-controls {
+        max-width: 1300px;
+        margin-bottom: 8px;
+        gap: 6px;
+        padding: 0 4px 8px;
+      }
+      
+      .top-controls .btn-top {
+        height: 34px;
+        font-size: 12px;
+        padding: 0 8px;
+        border-radius: 8px;
+        gap: 4px;
+      }
+      
+      .select-wrapper {
+        height: 34px;
+        min-width: 0;
+        max-width: none;
+        border-radius: 8px;
+      }
+      
+      .select-wrapper::before {
+        font-size: 12px;
+        gap: 4px;
+      }
+      
+      .select-wrapper select {
+        font-size: 12px;
+        padding: 0 25px 0 8px;
+      }
+      
+      .select-wrapper::after {
+        right: 8px;
+        font-size: 12px;
+      }
+      
+      /* ИСПРАВЛЕНО: Десктопный layout для карточек */
+      .cards.desktop-layout {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 8px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+        max-width: 1300px;
+      }
+      
+      /* Делаем карточки шириной ровно под 3 в ряд */
+      .card.desktop-layout {
+        width: calc((100% - 16px) / 3) !important;
+        max-width: none !important;
+        margin: 0 !important;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+        min-height: 320px;
+        padding: 10px;
+        border-radius: 10px;
+      }
+      
+      .media-block {
+        border-radius: 6px;
+        padding-top: 65%;
+      }
+      
+      .media-block .icon {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+        border-radius: 3px;
+      }
+      
+      .remove {
+        top: 4px;
+        right: 4px;
+      }
+      
+      .part-name-container {
+        min-height: 34px;
+        margin: 6px 0;
+        padding: 0 6px;
+        border-radius: 8px;
+      }
+      
+      .part-name-text {
+        font-size: 13px;
+        padding: 8px 0;
+      }
+      
+      .part-name-input {
+        height: 30px;
+        font-size: 13px;
+        border-radius: 6px;
+        padding: 0 6px;
+        border-width: 1px;
+      }
+      
+      .part-name-edit-btn,
+      .part-name-save-btn,
+      .part-name-cancel-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+        margin-left: 4px;
+        border-radius: 4px;
+      }
+      
+      /* ИСПРАВЛЕНО: Делаем контролы карточки компактнее для ПК */
+      .controls {
+        margin-top: 8px;
+        gap: 4px;
+        padding: 6px 0;
+        flex-wrap: nowrap;
+      }
+      
+      .pill {
+        height: 30px;
+        font-size: 11px;
+        padding: 0 8px;
+        border-radius: 12px;
+        max-width: 100px;
+        min-width: 60px;
+      }
+      
+      .controls input {
+        width: 30px;
+        height: 30px;
+        font-size: 11px;
+        border-radius: 6px;
+        padding: 0 2px;
+        min-width: 30px;
+      }
+      
+      .btn {
+        height: 30px;
+        font-size: 11px;
+        padding: 0 8px;
+        min-width: 70px;
+        border-radius: 6px;
+        gap: 3px;
+      }
+      
+      .btn-info {
+        min-width: 30px;
+        padding: 0 4px;
+      }
+      
+      /* Иконки в кнопках */
+      .btn i {
+        font-size: 10px;
+      }
+      
+      /* Скрываем текст в кнопках на очень узких карточках */
+      @media (min-width: 1025px) and (max-width: 1150px) {
+        .btn-add span,
+        .btn-take span {
+          display: none;
+        }
+        
+        .btn-add,
+        .btn-take {
+          min-width: 40px;
+          padding: 0 6px;
+          justify-content: center;
+        }
+        
+        .btn-add i,
+        .btn-take i {
+          margin: 0;
+        }
+      }
+      
+      /* Уменьшаем пагинацию */
+      .pagination {
+        max-width: 1300px;
+        margin: 20px auto;
+        gap: 4px;
+      }
+      
+      .pagination button {
+        padding: 8px 12px;
+        font-size: 13px;
+        height: 36px;
+        min-width: 90px;
+        border-radius: 6px;
+        gap: 4px;
+      }
+      
+      .page-numbers button {
+        height: 36px;
+        font-size: 13px;
+        padding: 0 12px;
+        min-width: 24px;
+        border-radius: 8px;
+      }
+      
+      .pagination button i {
+        font-size: 14px;
+      }
+      
+      /* Уменьшаем модальное окно */
+      .modal {
+        padding: 12px;
+        border-radius: 8px;
+      }
+      
+      .modal h3 {
+        font-size: 14px;
+        padding-bottom: 6px;
+      }
+      
+      .modal pre {
+        font-size: 12px;
+        padding: 6px;
+        line-height: 1.2;
+      }
+      
+      .modal-close {
+        font-size: 20px;
+        top: 4px;
+        right: 8px;
+      }
     }
   </style>
 </head>
 <body>
-
-<div class="loading-screen" id="loader">
-  <div class="logo-wrapper">
-    <div class="glow-ring"></div>
-    <img src="https://i.postimg.cc/wjGzSY92/1.png" alt="Loading Logo">
-  </div>
+<!-- Индикатор загрузки -->
+<div class="loader-container" id="loader">
+  <div class="loader"></div>
 </div>
 
+<!-- Шапка -->
 <header>
   <div class="logo"><img src="https://i.postimg.cc/wjGzSY92/1.png" alt="Logo"></div>
   <div class="site-name">
     <div class="site-name-dropdown" onclick="toggleSitesDropdown(event)">
-      <span class="site-name-text">BLOCKBUSTER</span>
+      <span class="site-name-text">BLOCKBUSTER</span> <!-- ← ДОБАВЛЕН КЛАСС -->
       <div class="dropdown-sites" id="sitesDropdown">
         <a href="https://smart-bowling.github.io/PARTS-KH/">LUCKY STRIKE KH</a>
         <a href="https://smart-bowling.github.io/PARTS-SKYMALL/">SKYMALL</a>
@@ -679,12 +1410,18 @@
     <div></div><div></div><div></div>
   </div>
   <div class="dropdown" id="dropdownMenu">
-    <a href="https://smart-bowling.github.io/MANUALS-HTML/"><i class="fas fa-book"></i> МАНУАЛЫ</a>
-    <a href="https://smart-bowling.github.io/SMB-BB/"><i class="fas fa-screwdriver-wrench"></i> ОБСЛУЖИВАНИЕ</a>
-    <a href="https://smart-bowling.github.io/PS-STOP-BB/"><i class="fas fa-exclamation-triangle"></i> STOP LANE</a>
+    <a href="https://smart-bowling.github.io/MANUALS-HTML/">
+      <i class="fas fa-book"></i> МАНУАЛЫ
+    <a href="https://smart-bowling.github.io/SMB-BB/">
+      <i class="fas fa-screwdriver-wrench"></i> ОБСЛУЖИВАНИЕ
+    </a>
+    <a href="https://smart-bowling.github.io/PS-STOP-BB/">
+      <i class="fas fa-exclamation-triangle"></i> STOP LANE
+    </a>
   </div>
 </header>
 
+<!-- Блок авторизации -->
 <div id="login">
   <h2>Вход на сайт</h2>
   <div id="g_id_onload"
@@ -695,21 +1432,35 @@
   <div class="g_id_signin" data-type="standard"></div>
 </div>
 
+<!-- Контент для авторизованных -->
 <div id="content" style="display:none">
   <div class="top-controls">
     <div class="select-wrapper">
-      <select id="sortSelect">
+      <select id="sortSelect" title="Фильтр">
         <option value="all">Все детали</option>
         <option value="popular">Пос. взят. за 30 дней</option>
         <option value="mostPopular">Популярные</option>
         <option value="sortByQty">Остатки</option>
       </select>
     </div>
-    <button id="btnSearch" class="btn-top"><i class="fas fa-search"></i> Поиск</button>
-    <button id="btnReset" class="btn-top"><i class="fas fa-sync-alt"></i> Сбросить</button>
-    <button onclick="window.location.href='https://smart-bowling.github.io/PARTS-STORE/'" class="btn-top"><i class="fas fa-store"></i> Магазин</button>
-    <button onclick="window.open('https://smart-bowling.github.io/ADD-PARTS-BB/', '_blank')" class="btn-top"><i class="fas fa-plus-circle"></i> Добавить</button>
-  </div>
+    
+  <button id="btnSearch" class="btn-top">
+    <i class="fas fa-search"></i> Поиск
+  </button>
+
+  <button id="btnReset" class="btn-top">
+    <i class="fas fa-sync-alt"></i> Сбросить
+  </button>
+
+<button onclick="window.location.href='https://smart-bowling.github.io/PARTS-STORE/'" class="btn-top">
+  <i class="fas fa-store"></i> Магазин
+</button>
+    
+  <button onclick="window.open('https://smart-bowling.github.io/ADD-PARTS-BB/', '_blank')" class="btn-top">
+    <i class="fas fa-plus-circle"></i> Добавить
+  </button>
+</div>
+
 
   <div class="cards" id="cardsContainer"></div>
 
@@ -729,37 +1480,44 @@
 </div>
 
 <script>
-  // Функция для показа/скрытия анимации загрузки
+  // Функция для показа/скрытия индикатора загрузки
   function showLoader(show) {
     document.getElementById('loader').style.display = show ? 'flex' : 'none';
   }
 
+  // Функция для выпадающего меню
   function toggleDropdown() {
     const menu = document.getElementById("dropdownMenu");
     menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
   }
 
+  // Функция для выпадающего списка сайтов
   function toggleSitesDropdown(event) {
     event.stopPropagation();
     const dropdown = document.getElementById("sitesDropdown");
     dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
   }
 
+  // Закрытие выпадающего списка при клике вне его
   document.addEventListener('click', function(e) {
     const dropdown = document.getElementById("sitesDropdown");
     const siteName = document.querySelector('.site-name-dropdown');
-    if (dropdown && dropdown.style.display === 'block' && !siteName.contains(e.target)) {
+    
+    if (dropdown.style.display === 'block' && !siteName.contains(e.target)) {
       dropdown.style.display = 'none';
     }
   });
 
+  // Настройки авторизации
   const allowedEmails = ["sasha380sheyd@gmail.com", "glusenkoaleksandr2907@gmail.com", "vadiksss900@gmail.com"];
 
+  // Обработчик ответе от Google
   function handleCredentialResponse(response) {
     showLoader(true);
     try {
       const data = parseJwt(response.credential);
       const email = data.email;
+
       if (allowedEmails.includes(email)) {
         localStorage.setItem("userEmail", email);
         location.reload();
@@ -771,6 +1529,7 @@
     }
   }
 
+  // Проверка авторизации при загрузке страницы
   window.onload = () => {
     const userEmail = localStorage.getItem("userEmail");
     if (userEmail && allowedEmails.includes(userEmail)) {
@@ -780,133 +1539,292 @@
     }
   };
 
+  // Функция для разбора JWT токена
   function parseJwt(token) {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
     return JSON.parse(jsonPayload);
   }
 
-  const pagination = { prevPage: () => {}, nextPage: () => {} };
+  // Глобальный объект для пагинации
+  const pagination = {
+    prevPage: function() {},
+    nextPage: function() {}
+  };
 
+  // Инициализация приложения
   function initApp() {
     const API_URL = "https://script.google.com/macros/s/AKfycbzaLkiSCaFvVrDOtPJ-SV-Oo6mNobLgFgz_0uPo4cN3xlhvEZ4rOt6tkdzpsjJmp1qx7Q/exec";
-    let allEntries = [], currentEntries = [], currentPage = 1, totalPages = 1;
-    const cardsPerPage = 30;
 
+    let allEntries = [];
+    let currentEntries = [];
+    let currentPage = 1;
+    let totalPages = 1;
+    const cardsPerPage = 30; // Оставляем 6 карточек на странице (по 3 в 2 ряда)
+
+    // Основные функции приложения
     async function getEntries() {
       showLoader(true);
-      try { const res = await fetch(`${API_URL}?action=getEntries`); return await res.json(); }
-      finally { showLoader(false); }
+      try {
+        const res = await fetch(`${API_URL}?action=getEntries`);
+        return await res.json();
+      } finally {
+        showLoader(false);
+      }
     }
 
     async function updateQuantity(partNumber, delta) {
       showLoader(true);
-      try { const res = await fetch(`${API_URL}?action=updateQuantity&partNumber=${encodeURIComponent(partNumber)}&delta=${delta}`); return await res.json(); }
-      finally { showLoader(false); }
-    }
-
-    async function updatePartName(partNumber, newName) {
-      showLoader(true);
-      try { const res = await fetch(`${API_URL}?action=updatePartName&partNumber=${encodeURIComponent(partNumber)}&newName=${encodeURIComponent(newName)}`); return await res.json(); }
-      finally { showLoader(false); }
+      try {
+        const res = await fetch(`${API_URL}?action=updateQuantity&partNumber=${encodeURIComponent(partNumber)}&delta=${delta}`);
+        return await res.json();
+      } finally {
+        showLoader(false);
+      }
     }
 
     async function deleteEntry(rowIndex) {
       showLoader(true);
-      try { const res = await fetch(`${API_URL}?action=deleteEntry&rowIndex=${rowIndex}`); return await res.json(); }
-      finally { showLoader(false); }
+      try {
+        const res = await fetch(`${API_URL}?action=deleteEntry&rowIndex=${rowIndex}`);
+        return await res.json();
+      } finally {
+        showLoader(false);
+      }
     }
 
     async function getHistory(partNumber) {
       showLoader(true);
-      try { const res = await fetch(`${API_URL}?action=getHistory&partNumber=${encodeURIComponent(partNumber)}`); return await res.text(); }
-      finally { showLoader(false); }
+      try {
+        const res = await fetch(`${API_URL}?action=getHistory&partNumber=${encodeURIComponent(partNumber)}`);
+        return await res.text();
+      } finally {
+        showLoader(false);
+      }
+    }
+
+    async function getPopularEntries() {
+      showLoader(true);
+      try {
+        const res = await fetch(`${API_URL}?action=getPopularEntries`);
+        return await res.json();
+      } finally {
+        showLoader(false);
+      }
+    }
+
+    async function getMostPopularEntries() {
+      showLoader(true);
+      try {
+        const res = await fetch(`${API_URL}?action=getMostPopularEntries`);
+        return await res.json();
+      } finally {
+        showLoader(false);
+      }
+    }
+
+    // Новая функция для обновления названия детали
+    async function updatePartName(partNumber, newName) {
+      showLoader(true);
+      try {
+        const res = await fetch(`${API_URL}?action=updatePartName&partNumber=${encodeURIComponent(partNumber)}&newName=${encodeURIComponent(newName)}`);
+        return await res.json();
+      } finally {
+        showLoader(false);
+      }
     }
 
     function createCard(entry) {
       const div = document.createElement('div');
       div.className = 'card';
-      if (window.innerWidth > 1024) div.classList.add('desktop-layout');
-      
+      div.dataset.row = entry.rowIndex;
+      div.dataset.partNumber = entry.partNumber.toLowerCase();
+
       const media = document.createElement('div');
       media.className = 'media-block';
+
       if (entry.fileUrl && entry.fileUrl.includes('/preview')) {
-        const iframe = document.createElement('iframe'); iframe.src = entry.fileUrl; media.appendChild(iframe);
+        const iframe = document.createElement('iframe');
+        iframe.src = entry.fileUrl;
+        media.appendChild(iframe);
       } else if (entry.fileUrl) {
-        const img = document.createElement('img'); img.src = entry.fileUrl; img.loading = 'lazy'; media.appendChild(img);
+        const img = document.createElement('img');
+        img.src = entry.fileUrl;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        media.appendChild(img);
       }
 
+      const overlay = document.createElement('div');
+      overlay.className = 'img-overlay';
+      media.appendChild(overlay);
+
       const rem = document.createElement('div');
-      rem.className = 'icon remove'; rem.textContent = 'Х';
+      rem.className = 'icon remove';
+      rem.textContent = 'Х';
+      media.append(rem);
+
+      div.append(media);
+
+      // Добавляем блок с названием детали
+      const partNameContainer = document.createElement('div');
+      partNameContainer.className = 'part-name-container';
+      partNameContainer.dataset.partNumber = entry.partNumber;
+      
+      const partNameText = document.createElement('div');
+      partNameText.className = 'part-name-text';
+      partNameText.textContent = entry.partName || 'Название детали';
+      
+      const editButton = document.createElement('button');
+      editButton.className = 'part-name-edit-btn';
+      editButton.innerHTML = '<i class="fas fa-edit"></i>';
+      editButton.title = 'Редактировать название';
+      
+      partNameContainer.appendChild(partNameText);
+      partNameContainer.appendChild(editButton);
+      div.append(partNameContainer);
+
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+
+      const pill = document.createElement('div');
+      pill.className = 'pill';
+      pill.textContent = entry.partNumber;
+
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'text';
+      qtyInput.value = entry.quantity;
+      qtyInput.readOnly = true;
+
+      const btnAdd = document.createElement('button');
+      btnAdd.className = 'btn btn-add';
+      btnAdd.innerHTML = '<i class="fas fa-plus-circle"></i> <span>ДОБАВИТЬ</span>';
+
+      const btnInfo = document.createElement('button');
+      btnInfo.className = 'btn btn-info';
+      btnInfo.innerHTML = '<i class="fas fa-history"></i> <span>ИСТОРИЯ</span>';
+
+      const btnTake = document.createElement('button');
+      btnTake.className = 'btn btn-take';
+      btnTake.innerHTML = '<i class="fas fa-shopping-cart"></i> <span>ВЗЯТЬ</span>';
+
+      controls.append(pill, qtyInput, btnAdd, btnInfo, btnTake);
+      div.append(controls);
+
+      // Обработчик клика для кнопки редактирования
+      editButton.addEventListener('click', function() {
+        const partNumber = partNameContainer.dataset.partNumber;
+        const currentName = partNameText.textContent;
+        
+        // Переходим в режим редактирования
+        partNameContainer.classList.add('editing');
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'part-name-input';
+        input.value = currentName;
+        
+        const saveButton = document.createElement('button');
+        saveButton.className = 'part-name-save-btn';
+        saveButton.innerHTML = '<i class="fas fa-check"></i>';
+        saveButton.title = 'Сохранить';
+        
+        const cancelButton = document.createElement('button');
+        cancelButton.className = 'part-name-cancel-btn';
+        cancelButton.innerHTML = '<i class="fas fa-times"></i>';
+        cancelButton.title = 'Отменить';
+        
+        // Заменяем содержимое контейнера
+        partNameText.style.display = 'none';
+        editButton.style.display = 'none';
+        
+        partNameContainer.appendChild(input);
+        partNameContainer.appendChild(saveButton);
+        partNameContainer.appendChild(cancelButton);
+        
+        input.focus();
+        input.select();
+        
+        // Функция завершения редактирования
+        const finishEdit = async (save = false) => {
+          const newName = save ? input.value.trim() : currentName;
+          
+          partNameContainer.classList.remove('editing');
+          input.remove();
+          saveButton.remove();
+          cancelButton.remove();
+          
+          partNameText.style.display = '';
+          editButton.style.display = '';
+          
+          if (save && newName && newName !== currentName) {
+            const res = await updatePartName(partNumber, newName);
+            if (res.status === 'success') {
+              partNameText.textContent = newName;
+              // Обновляем название в массиве записей
+              const updatedEntry = allEntries.find(e => e.partNumber === partNumber);
+              if (updatedEntry) updatedEntry.partName = newName;
+            } else {
+              alert(res.message || 'Ошибка при обновлении названия');
+            }
+          }
+        };
+        
+        // Обработчики для кнопок
+        saveButton.addEventListener('click', () => finishEdit(true));
+        cancelButton.addEventListener('click', () => finishEdit(false));
+        
+        input.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            finishEdit(true);
+          }
+        });
+        
+        input.addEventListener('blur', () => {
+          // Не завершаем редактирование при потере фокуса
+        });
+      });
+
       rem.onclick = async () => {
         if (confirm('Удалить эту запись?')) {
           await deleteEntry(entry.rowIndex);
           allEntries = allEntries.filter(e => e.rowIndex !== entry.rowIndex);
           currentEntries = currentEntries.filter(e => e.rowIndex !== entry.rowIndex);
+          updateTotalPages();
+          if (currentPage > totalPages) currentPage = totalPages;
           renderPage(currentPage);
         }
       };
-      media.append(rem);
-      div.append(media);
-
-      const partNameContainer = document.createElement('div');
-      partNameContainer.className = 'part-name-container';
-      const partNameText = document.createElement('div');
-      partNameText.className = 'part-name-text';
-      partNameText.textContent = entry.partName || 'Название детали';
-      const editButton = document.createElement('button');
-      editButton.className = 'part-name-edit-btn';
-      editButton.innerHTML = '<i class="fas fa-edit"></i>';
-      
-      partNameContainer.append(partNameText, editButton);
-      div.append(partNameContainer);
-
-      editButton.onclick = () => {
-        const input = document.createElement('input');
-        input.className = 'part-name-input';
-        input.value = partNameText.textContent;
-        const saveBtn = document.createElement('button');
-        saveBtn.className = 'part-name-save-btn';
-        saveBtn.innerHTML = '<i class="fas fa-check"></i>';
-        
-        partNameText.style.display = 'none';
-        editButton.style.display = 'none';
-        partNameContainer.append(input, saveBtn);
-        input.focus();
-
-        saveBtn.onclick = async () => {
-          const res = await updatePartName(entry.partNumber, input.value);
-          if (res.status === 'success') {
-            partNameText.textContent = input.value;
-            input.remove(); saveBtn.remove();
-            partNameText.style.display = ''; editButton.style.display = '';
-          }
-        };
-      };
-
-      const controls = document.createElement('div');
-      controls.className = 'controls';
-      const pill = document.createElement('div'); pill.className = 'pill'; pill.textContent = entry.partNumber;
-      const qtyInput = document.createElement('input'); qtyInput.value = entry.quantity; qtyInput.readOnly = true;
-      
-      const btnAdd = document.createElement('button'); btnAdd.className = 'btn btn-add'; btnAdd.innerHTML = '<i class="fas fa-plus-circle"></i> <span>ДОБАВИТЬ</span>';
-      const btnInfo = document.createElement('button'); btnInfo.className = 'btn btn-info'; btnInfo.innerHTML = '<i class="fas fa-history"></i>';
-      const btnTake = document.createElement('button'); btnTake.className = 'btn btn-take'; btnTake.innerHTML = '<i class="fas fa-shopping-cart"></i> <span>ВЗЯТЬ</span>';
 
       btnAdd.onclick = async () => {
-        const delta = prompt('Сколько добавить?');
-        if (delta) {
-          const res = await updateQuantity(entry.partNumber, Number(delta));
-          if (res.status === 'success') qtyInput.value = res.quantity;
+        const deltaStr = prompt('Введите число для добавления:');
+        const delta = Number(deltaStr);
+        if (deltaStr !== null && !isNaN(delta)) {
+          const res = await updateQuantity(entry.partNumber, delta);
+          if (res.status === 'success') {
+            qtyInput.value = res.quantity;
+            entry.quantity = res.quantity;
+          } else {
+            alert(res.message);
+          }
         }
       };
 
       btnTake.onclick = async () => {
-        const delta = prompt('Сколько взять?');
-        if (delta) {
-          const res = await updateQuantity(entry.partNumber, -Number(delta));
-          if (res.status === 'success') qtyInput.value = res.quantity;
+        const deltaStr = prompt('Введите число для вычитания:');
+        const delta = Number(deltaStr);
+        if (deltaStr !== null && !isNaN(delta)) {
+          const res = await updateQuantity(entry.partNumber, -delta);
+          if (res.status === 'success') {
+            qtyInput.value = res.quantity;
+            entry.quantity = res.quantity;
+          } else {
+            alert(res.message);
+          }
         }
       };
 
@@ -916,60 +1834,266 @@
         document.getElementById('modalOverlay').style.display = 'flex';
       };
 
-      controls.append(pill, qtyInput, btnAdd, btnInfo, btnTake);
-      div.append(controls);
       return div;
+    }
+
+    function updateTotalPages() {
+      totalPages = Math.ceil(currentEntries.length / cardsPerPage) || 1;
     }
 
     function renderPage(page) {
       const container = document.getElementById('cardsContainer');
+      if (!container) {
+        console.error('Cards container not found!');
+        return;
+      }
+      
       container.innerHTML = '';
-      totalPages = Math.ceil(currentEntries.length / cardsPerPage) || 1;
+
       const start = (page - 1) * cardsPerPage;
-      currentEntries.slice(start, start + cardsPerPage).forEach(e => container.appendChild(createCard(e)));
+      const end = start + cardsPerPage;
+      const pageData = currentEntries.slice(start, end);
+
+      if (pageData.length === 0) {
+        container.innerHTML = '<div class="no-data">Нет данных для отображения</div>';
+        return;
+      }
+
+      pageData.forEach(entry => {
+        const card = createCard(entry);
+        container.appendChild(card);
+      });
+
       renderPageNumbers();
-      document.getElementById('prevBtn').disabled = page === 1;
-      document.getElementById('nextBtn').disabled = page === totalPages;
-      if (window.innerWidth > 1024) container.classList.add('desktop-layout');
-      window.scrollTo(0,0);
+      updatePaginationControls();
+      window.scrollTo(0, 0);
+      
+      // Применяем десктопный layout если нужно
+      if (window.innerWidth > 1024) {
+        toggleDesktopLayout(true);
+      }
     }
 
     function renderPageNumbers() {
-      const container = document.getElementById('pageNumbers');
-      container.innerHTML = '';
-      for (let i = 1; i <= totalPages; i++) {
-        const b = document.createElement('button'); b.textContent = i;
-        if (i === currentPage) b.classList.add('active');
-        b.onclick = () => { currentPage = i; renderPage(i); };
-        container.appendChild(b);
+      const pageContainer = document.getElementById('pageNumbers');
+      if (!pageContainer) {
+        console.error('Page numbers container not found!');
+        return;
+      }
+      
+      pageContainer.innerHTML = '';
+      
+      const maxVisiblePages = 5;
+      let startPage = Math.max(currentPage - 2, 1);
+      let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+      
+      if (startPage > 1) {
+        addPageButton(1);
+        if (startPage > 2) {
+          addDots();
+        }
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        addPageButton(i);
+      }
+      
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          addDots();
+        }
+        addPageButton(totalPages);
+      }
+      
+      function addPageButton(page) {
+        const btn = document.createElement('button');
+        btn.textContent = page;
+        if (page === currentPage) {
+          btn.classList.add('active');
+        }
+        btn.onclick = () => goToPage(page);
+        pageContainer.appendChild(btn);
+      }
+      
+      function addDots() {
+        const dots = document.createElement('span');
+        dots.textContent = '...';
+        dots.style.padding = '0 10px';
+        pageContainer.appendChild(dots);
       }
     }
 
-    pagination.nextPage = () => { if (currentPage < totalPages) renderPage(++currentPage); };
-    pagination.prevPage = () => { if (currentPage > 1) renderPage(--currentPage); };
+    function goToPage(page) {
+      if (page < 1 || page > totalPages) return;
+      
+      currentPage = page;
+      renderPage(currentPage);
+      updatePaginationControls();
+    }
 
-    document.getElementById('btnSearch').onclick = () => {
-      const term = prompt('Поиск по номеру:');
+    // Обновляем глобальные функции пагинации
+    pagination.nextPage = function() {
+      if (currentPage < totalPages) {
+        goToPage(currentPage + 1);
+      }
+    };
+
+    pagination.prevPage = function() {
+      if (currentPage > 1) {
+        goToPage(currentPage - 1);
+      }
+    };
+
+    function updatePaginationControls() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      
+      if (prevBtn) prevBtn.disabled = currentPage <= 1;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    function resetSearch() {
+      currentEntries = [...allEntries];
+      updateTotalPages();
+      currentPage = 1;
+      renderPage(currentPage);
+      document.getElementById('sortSelect').value = 'all';
+    }
+
+    // Инициализация событий
+    document.getElementById('btnSearch')?.addEventListener('click', () => {
+      const term = prompt('Введите номер детали для поиска:');
       if (term !== null) {
-        currentEntries = allEntries.filter(e => e.partNumber.toLowerCase().includes(term.toLowerCase()));
-        currentPage = 1; renderPage(1);
+        const searchTerm = term.toLowerCase().trim();
+        currentEntries = searchTerm.length === 0 
+          ? [...allEntries] 
+          : allEntries.filter(e => e.partNumber.toLowerCase().includes(searchTerm));
+        updateTotalPages();
+        currentPage = 1;
+        renderPage(currentPage);
+        document.getElementById('sortSelect').value = 'all';
       }
-    };
+    });
 
-    document.getElementById('btnReset').onclick = () => {
+    document.getElementById('btnReset')?.addEventListener('click', () => {
       currentEntries = [...allEntries];
-      currentPage = 1; renderPage(1);
-    };
+      updateTotalPages();
+      currentPage = 1;
+      renderPage(currentPage);
+      document.getElementById('sortSelect').value = 'all';
+    });
 
-    document.getElementById('modalClose').onclick = () => document.getElementById('modalOverlay').style.display = 'none';
+    document.getElementById('sortSelect')?.addEventListener('change', async function() {
+      showLoader(true);
+      try {
+        if (this.value === 'all') {
+          currentEntries = [...allEntries];
+        } else if (this.value === 'popular') {
+          currentEntries = await getPopularEntries();
+          if (currentEntries && currentEntries[0]?.lastChangeDate) {
+            currentEntries.sort((a, b) => new Date(b.lastChangeDate) - new Date(a.lastChangeDate));
+          }
+        } else if (this.value === 'mostPopular') {
+          currentEntries = await getMostPopularEntries();
+          if (!currentEntries?.length) {
+            alert('Нет данных для сортировки "всё время"');
+            return;
+          }
+        } else if (this.value === 'sortByQty') {
+          currentEntries = [...allEntries].sort((a, b) => a.quantity - b.quantity);
+        }
+        
+        updateTotalPages();
+        currentPage = 1;
+        renderPage(currentPage);
+      } finally {
+        showLoader(false);
+      }
+    });
 
+    document.getElementById('modalClose')?.addEventListener('click', () => {
+      document.getElementById('modalOverlay').style.display = 'none';
+    });
+
+    document.getElementById('modalOverlay')?.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modalOverlay')) {
+        document.getElementById('modalOverlay').style.display = 'none';
+      }
+    });
+
+    // Загрузка данных
     async function loadData() {
-      allEntries = await getEntries();
-      currentEntries = [...allEntries];
-      renderPage(1);
+      showLoader(true);
+      try {
+        allEntries = await getEntries();
+        currentEntries = [...allEntries];
+        updateTotalPages();
+        renderPage(currentPage);
+      } finally {
+        showLoader(false);
+      }
     }
+
     loadData();
   }
+  
+  // Функция для включения/выключения десктопного layout
+  function toggleDesktopLayout(enable) {
+    const cardsContainer = document.getElementById('cardsContainer');
+    const cards = document.querySelectorAll('.card');
+    const topControls = document.querySelector('.top-controls');
+    
+    if (!cardsContainer || cards.length === 0) return;
+    
+    if (enable) {
+      // Включаем десктопный layout
+      cardsContainer.classList.add('desktop-layout');
+      
+      cards.forEach(card => {
+        card.classList.add('desktop-layout');
+      });
+      
+      // Ограничиваем максимальную ширину контейнера карточек
+      cardsContainer.style.maxWidth = '1300px';
+      cardsContainer.style.margin = '0 auto';
+      cardsContainer.style.padding = '0';
+      cardsContainer.style.boxSizing = 'border-box';
+      
+      // Ограничиваем максимальную ширину верхних контролов
+      if (topControls) {
+        topControls.style.maxWidth = '1300px';
+        topControls.style.margin = '0 auto 12px';
+      }
+    } else {
+      // Выключаем десктопный layout (мобильный вид)
+      cardsContainer.classList.remove('desktop-layout');
+      
+      cards.forEach(card => {
+        card.classList.remove('desktop-layout');
+      });
+      
+      cardsContainer.style.maxWidth = 'none';
+      cardsContainer.style.margin = '0';
+      cardsContainer.style.padding = '0';
+      
+      if (topControls) {
+        topControls.style.maxWidth = 'none';
+        topControls.style.margin = '0 auto 20px';
+      }
+    }
+  }
+
+  // Обновляем layout при изменении размера окна
+  window.addEventListener('resize', function() {
+    const cardsContainer = document.getElementById('cardsContainer');
+    if (!cardsContainer) return;
+    
+    if (window.innerWidth > 1024) {
+      toggleDesktopLayout(true);
+    } else {
+      toggleDesktopLayout(false);
+    }
+  });
 </script>
 </body>
 </html>
