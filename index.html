@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SMB BB</title>
+  <title>SMB BLOCKBUSTER</title>
   
   <!-- ===================== ССЫЛКИ ДЛЯ УДОБНОГО ИЗМЕНЕНИЯ ===================== -->
   <script>
@@ -19,50 +19,23 @@
       FONT_AWESOME: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
       GOOGLE_FONT: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap",
       
-      // ============== ССЫЛКИ НА ПРОЕКТЫ В ВЫПАДАЮЩЕМ МЕНЮ ==============
-      PROJECTS: {
-        // Проекты в основном выпадающем меню (Site Name Dropdown)
-        SKYMALL: {
-          NAME: "SKYMALL",
-          URL: "https://smart-bowling.github.io/SMB-SKYMALL/"
-        },
-        LUCKY_STRIKE_KH: {
-          NAME: "LUCKY STRIKE KH",
-          URL: "https://smart-bowling.github.io/SMB-LS-KH/"
-        }
-      },
-      
-      // ============== ССЫЛКИ В МЕНЮ (Dropdown Menu) ==============
-      MENU_LINKS: [
-        {
-          NAME: "ДЕТАЛИ",
-          URL: "https://smart-bowling.github.io/PARTS-BB/",
-          ICON: "fas fa-cube"
-        },
-        {
-          NAME: "STOP LANE",
-          URL: "https://smart-bowling.github.io/PS-STOP-BB/",
-          ICON: "fas fa-exclamation-triangle"
-        }
-      ],
-      
       // ============== API И АУТЕНТИФИКАЦИЯ ==============
       GAS_URL: "https://script.google.com/macros/s/AKfycbxXwr54yuVZpdPTEugmTHedgrRlUWNT1E7Iz_LJ4jqidJZTQFe5v2XH8LCMCILwr47s/exec",
       GOOGLE_CLIENT_ID: "328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com",
       
-      // ============== РАЗРЕШЕННЫЕ EMAIL ==============
-      ALLOWED_EMAILS: [
-        "vadiksss900@gmail.com",
-        "sasha380sheyd@gmail.com",
-        "bowlingblock.b@gmail.com",
-        "glusenkoaleksandr2907@gmail.com"
-      ]
+      // ============== НОВЫЕ ПАРАМЕТРЫ ДЛЯ АВТОРИЗАЦИИ ==============
+      API_KEY: 'AIzaSyAXL0Hsfxy-g-AgYhnivj4x9gCB2rrtF-0',
+      SPREADSHEET_ID: '1-yiVdZYa6wJdupTiuiHvI_ht3Vu73RUjyCehZqs2cJ4',
+      CURRENT_SITE: 'https://smart-bowling.github.io/SMB-BB/'
     };
   </script>
   <!-- ===================== КОНЕЦ ССЫЛОК ===================== -->
   
   <link rel="icon" type="image/png" href="https://i.postimg.cc/dtSpKx0W/1.png" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Identity Script -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -72,36 +45,36 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(255, 255, 255, 0.95);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 10000;
       padding: 20px;
-      gap: 20px;
+      font-family: 'Arial', sans-serif;
     }
-
-    .google-btn {
-      background: #4285F4;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+    
+    #login h2 {
+      display: none;
+    }
+    
+    .g_id_signin {
       display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      transition: all 0.3s ease;
+      margin: 0 auto;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+      transition: none;
+      animation: none;
     }
-
-    .google-btn:hover {
-      background: #3367D6;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    
+    .g_id_signin:hover {
+      transform: none;
+      box-shadow: none;
     }
 
     body, html {
@@ -112,6 +85,7 @@
       color: #1a2f40;
       font-size: clamp(10px, 3vw, 14px);
       font-weight: 700;
+      touch-action: manipulation;
     }
 
     header {
@@ -144,63 +118,57 @@
       font-size: 20px;
       font-weight: bold;
       color: white;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .site-name-dropdown {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #1f2937;
-      border: 1px solid #444;
-      border-radius: 8px;
-      overflow: hidden;
-      z-index: 1001;
-      min-width: 150px;
-      margin-top: 25px;
-      width: 90%;
-    }
-
-    .site-name-dropdown a {
-      padding: 10px 15px;
-      text-decoration: none;
-      color: white;
-      transition: background 0.3s;
-      user-select: none;
       display: flex;
       align-items: center;
-      white-space: nowrap;
       justify-content: center;
     }
 
-    .site-name-dropdown a:hover {
-      background-color: #374151;
-    }
-
-    .menu-button {
-      width: 30px;
-      cursor: pointer;
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid white;
+      background-color: #4a5568;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 20px;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .menu-button div {
-      height: 4px;
-      background-color: white;
-      border-radius: 2px;
+    .user-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(255,255,255,0.3);
     }
 
-    .dropdown {
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-avatar i {
+      font-size: 16px;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .user-avatar i {
+        font-size: 18px;
+      }
+    }
+
+    .user-dropdown {
       display: none;
-      flex-direction: column;
       position: absolute;
       top: 70px;
-      right: 15px;
+      right: 20px;
       background-color: #1f2937;
       border: 1px solid #444;
       border-radius: 8px;
@@ -209,7 +177,7 @@
       min-width: 150px;
     }
 
-    .dropdown a {
+    .user-dropdown a {
       padding: 10px 15px;
       text-decoration: none;
       color: white;
@@ -217,17 +185,17 @@
       user-select: none;
       display: flex;
       align-items: center;
+      cursor: pointer;
     }
 
-    .dropdown a:hover {
+    .user-dropdown a:hover {
       background-color: #374151;
     }
 
     .icon-space {
-      margin-right: 6px;
+      margin-right: 10px;
       width: 20px;
       text-align: center;
-      font-size: 16px;
     }
 
     /* Кнопка РЕЙТИНГ */
@@ -540,29 +508,46 @@
       background-color: #1a2f40;
     }
 
+    /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
     #app-content {
-      width: 96%;
-      max-width: 500px;
-      margin: 20px auto 40px;
-      padding: 0px 5px 10px 5px;
+      width: 98%;
+      max-width: 1200px;
+      margin: 80px auto 40px;
+      padding: 0 10px 10px 10px;
       box-sizing: border-box;
       background: transparent;
-      border-radius: 0;
-      box-shadow: none;
-      overflow-x: auto;
     }
 
-    table, thead, tbody, th, td, tr {
-      display: block;
+    /* Стили для таблицы - превращаем её в сетку */
+    table {
       width: 100%;
+      border-collapse: collapse;
     }
-
-    thead tr {
+    
+    thead {
       display: none;
     }
-
+    
+    tbody {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      width: 100%;
+    }
+    
+    /* Контейнер карточки */
+    .card-container {
+      position: relative;
+      margin-bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
+    }
+    
+    /* Стили для карточки */
     tbody tr {
-      margin-bottom: 20px;
+      display: block;
       background: white;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -574,6 +559,7 @@
       position: relative;
       overflow: hidden;
       width: 100%;
+      margin: 0;
     }
 
     tbody tr::before {
@@ -592,7 +578,7 @@
     tbody tr.selected {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0,0,0,0.15), 0 0 0 2px #dc143c;
-      margin-bottom: 60px; /* Дополнительное место для кнопок */
+      margin-bottom: 0;
     }
 
     tbody tr.selected::before {
@@ -716,6 +702,78 @@
       background-color: #a90e2e;
     }
 
+    /* Стили для кнопок фильтрации под карточкой */
+    .card-filter-buttons {
+      display: none;
+      width: 100%;
+      gap: 10px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 3;
+      order: 2;
+    }
+
+    .card-filter-buttons.visible {
+      display: flex;
+    }
+
+    .card-filter-button {
+      flex: 1;
+      padding: 8px 10px;
+      background-color: #1a2f40;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      text-align: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .card-filter-button:hover {
+      background-color: #2a3648;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+
+    .card-filter-button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    /* Стиль для кнопки "Показать все задачи" */
+    .show-all-button {
+      display: none;
+      width: 96%;
+      max-width: 500px;
+      margin: 10px auto;
+      padding: 10px 15px;
+      background-color: #1a2f40;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      text-align: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .show-all-button:hover {
+      background-color: #2a3648;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .show-all-button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    /* Пагинация */
     .pagination {
       display: flex;
       justify-content: center;
@@ -812,191 +870,220 @@
       margin-right: 6px;
     }
 
-    .loader-container {
+    /* ===== ОБНОВЛЕННАЯ АНИМАЦИЯ ЗАГРУЗКИ (как в MANUALS) ===== */
+    .loading-screen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.2);
+      inset: 0;
+      background: #1f2937;
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      z-index: 99999;
+      transition: opacity 0.5s ease;
     }
 
-    .loader {
-      width: 25px;
-      height: 25px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #dc143c;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .loading-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .logo-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* Стили для кнопок фильтрации под карточкой */
-    .card-filter-buttons {
-      display: none;
-      width: 100%;
-      gap: 10px;
-      margin-top: 10px;
+    .glow-ring {
       position: absolute;
-      left: 0;
-      top: 100%;
+      width: 80px;
+      height: 80px;
+      border-radius: 100%;
+      background: conic-gradient(#dc143c, transparent 100%);
+      animation: spin 5s linear infinite;
+      filter: blur(20px);
+    }
+
+    .loading-screen img {
+      width: 120px;
       z-index: 2;
     }
 
-    .card-filter-button {
-      flex: 1;
-      padding: 8px 10px;
-      background-color: #1a2f40;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 12px;
-      text-align: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    @keyframes spin {
+      to { transform: rotate(365deg); }
     }
 
-    .card-filter-button:hover {
-      background-color: #2a3648;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-    }
-
-    .card-filter-button:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-
-    /* Контейнер для карточки с относительным позиционированием */
-    .card-container {
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    /* Убираем нижний отступ у последней ячейки, чтобы было место для кнопок */
-    tbody tr > td:last-child {
-      padding-bottom: 0;
-    }
-
-    /* Добавляем место для кнопок под карточкой */
-    tbody tr.selected {
-      margin-bottom: 60px;
-    }
-
-    /* Стиль для кнопки "Показать все задачи" */
-    .show-all-button {
+    /* Дублируем те же стили для лоадера операций */
+    .action-loader {
+      position: fixed;
+      inset: 0;
+      background: #1f2937;
       display: none;
-      width: 96%;
-      max-width: 500px;
-      margin: 10px auto;
-      padding: 10px 15px;
-      background-color: #1a2f40;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 14px;
-      text-align: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      justify-content: center;
+      align-items: center;
+      z-index: 100000;
     }
 
-    .show-all-button:hover {
-      background-color: #2a3648;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    .action-loader.active {
+      display: flex;
     }
 
-    .show-all-button:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    .action-loader .logo-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .action-loader .glow-ring {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 100%;
+      background: conic-gradient(#dc143c, transparent 100%);
+      animation: spin 5s linear infinite;
+      filter: blur(20px);
+    }
+
+    .action-loader img {
+      width: 120px;
+      z-index: 2;
+    }
+
+    @media (min-width: 1025px) {
+      .action-loader .logo-wrapper {
+        width: 160px;
+        height: 160px;
+      }
+      .action-loader .glow-ring {
+        width: 80px;
+        height: 80px;
+        filter: blur(20px);
+      }
+      .action-loader img {
+        width: 120px;
+      }
+    }
+
+    /* ========== МЕДИА-ЗАПРОС ДЛЯ ПК ========== */
+    @media screen and (min-width: 768px) {
+      tbody {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .card-container {
+        margin-bottom: 0;
+      }
+      
+      tbody tr {
+        margin-bottom: 0;
+      }
+      
+      tbody tr.selected {
+        margin-bottom: 0;
+      }
+
+      #app-content {
+        max-width: 1000px;
+      }
+    }
+
+    @media screen and (min-width: 1200px) {
+      #app-content {
+        max-width: 1100px;
+      }
     }
   </style>
   <!-- Подключаем Flatpickr для календаря -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
-  <div id="login">
-    <h2>Вход на сайт</h2>
-    <button class="google-btn" onclick="googleAuth()">
-      <i class="fab fa-google"></i> Войти через Google
-    </button>
+  <!-- АНИМАЦИЯ ЗАГРУЗКИ ПРИ ВХОДЕ -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="logo-wrapper">
+      <div class="glow-ring"></div>
+      <img src="https://i.postimg.cc/wjGzSY92/1.png" alt="Loading Logo">
+    </div>
   </div>
 
-  <div id="loader" class="loader-container" style="display: none;">
-    <div class="loader"></div>
+  <!-- ТОЧНО ТАКАЯ ЖЕ АНИМАЦИЯ ДЛЯ ОПЕРАЦИЙ ОТПРАВКИ -->
+  <div class="action-loader" id="actionLoader">
+    <div class="logo-wrapper">
+      <div class="glow-ring"></div>
+      <img src="https://i.postimg.cc/wjGzSY92/1.png" alt="Action Loading">
+    </div>
   </div>
 
   <header>
-  <div class="logo">
-  <a href="https://smart-bowling.github.io/SMB/">
-    <img src="https://i.postimg.cc/wjGzSY92/1.png" alt="Logo">
-  </a>
-</div>
-    <div class="site-name" onclick="toggleSiteNameDropdown()">
-BLOCKBUSTER
-      <div class="site-name-dropdown" id="siteNameDropdown">
-        <!-- Проекты будут добавлены через JavaScript -->
-      </div>
+    <div class="logo">
+      <a href="https://smart-bowling.github.io/SMB/">
+        <img src="https://i.postimg.cc/wjGzSY92/1.png" alt="Logo">
+      </a>
     </div>
-    <div class="menu-button" onclick="toggleDropdown()">
-      <div></div><div></div><div></div>
+    <div class="site-name">
+      BLOCKBUSTER
     </div>
-    <div class="dropdown" id="dropdownMenu">
-      <!-- Меню будет добавлено через JavaScript -->
+    <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">
+    </div>
+    <div class="user-dropdown" id="userDropdown">
+      <a href="#" onclick="signOut()">
+        <i class="fas fa-sign-out-alt icon-space"></i> ВЫЙТИ
+      </a>
     </div>
   </header>
 
-  <!-- Кнопка РЕЙТИНГ -->
-  <div class="rating-button" id="ratingButton" onclick="toggleRating()" style="display: none;">
-    <div>РЕЙТИНГ</div>
-    <div><i class="fas fa-chevron-down"></i></div>
-  </div>
-
-  <!-- Карточка с задачами - теперь кликабельная -->
-  <div class="task-summary-card" id="openTasksCard" onclick="toggleDateFilter()" style="display: none;">
-    <div id="task-summary-label">Открытых задач</div>
-    <div class="task-count" id="openTaskCount">0</div>
-  </div>
-
-  <!-- Контейнер для фильтрации по дате -->
-  <div class="date-filter-container" id="date-filter-container">
-    <div class="date-filter-label">Просмотр выполненных задач по дате</div>
-    <div class="date-input-wrapper">
-      <i class="fas fa-calendar-alt calendar-icon"></i>
-      <input type="text" class="date-filter-input" id="date-filter-input" placeholder="Выберите дату" readonly>
+  <div id="login">
+    <div id="g_id_onload"
+         data-client_id="328749588235-bgfeukqogpoq2ha65j7j0vk840hctiaq.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
     </div>
-    <button class="clear-filter-btn" id="clear-filter-btn">Сбросить фильтр</button>
+    <div class="g_id_signin" data-type="standard"></div>
   </div>
-
-  <!-- КАРТОЧКИ С ОДИНАКОВОЙ ШИРИНОЙ -->
-  <div class="mechanics-rating" id="mechanicsRating">
-    <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
-    <div id="ratingContent"></div>
-  </div>
-
-  <div class="winner-section" id="winnerSection">
-    <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
-    <div id="winnerContent"></div>
-  </div>
-
-  <!-- Кнопка "Показать все задачи" -->
-  <button class="show-all-button" id="showAllButton" onclick="showAllTasks()" style="display: none;">
-    Показать все задачи
-  </button>
 
   <div id="app-content" style="display:none;">
+    <!-- Кнопка РЕЙТИНГ -->
+    <div class="rating-button" id="ratingButton" onclick="toggleRating()">
+      <div>РЕЙТИНГ</div>
+      <div><i class="fas fa-chevron-down"></i></div>
+    </div>
+
+    <!-- Карточка с задачами - теперь кликабельная -->
+    <div class="task-summary-card" id="openTasksCard" onclick="toggleDateFilter()">
+      <div id="task-summary-label">Открытых задач</div>
+      <div class="task-count" id="openTaskCount">0</div>
+    </div>
+
+    <!-- Контейнер для фильтрации по дате -->
+    <div class="date-filter-container" id="date-filter-container">
+      <div class="date-filter-label">Просмотр выполненных задач по дате</div>
+      <div class="date-input-wrapper">
+        <i class="fas fa-calendar-alt calendar-icon"></i>
+        <input type="text" class="date-filter-input" id="date-filter-input" placeholder="Выберите дату" readonly>
+      </div>
+      <button class="clear-filter-btn" id="clear-filter-btn">Сбросить фильтр</button>
+    </div>
+
+    <!-- КАРТОЧКИ С ОДИНАКОВОЙ ШИРИНОЙ -->
+    <div class="mechanics-rating" id="mechanicsRating">
+      <h3><i class="fas fa-trophy"></i> Рейтинг механиков за текущий месяц</h3>
+      <div id="ratingContent"></div>
+    </div>
+
+    <div class="winner-section" id="winnerSection">
+      <h3><i class="fas fa-crown"></i> Победитель прошлого месяца</h3>
+      <div id="winnerContent"></div>
+    </div>
+
+    <!-- Кнопка "Показать все задачи" -->
+    <button class="show-all-button" id="showAllButton" onclick="showAllTasks()">
+      Показать все задачи
+    </button>
+
     <table>
       <thead>
         <tr>
@@ -1022,54 +1109,169 @@ BLOCKBUSTER
   <script src="https://npmcdn.com/flatpickr/dist/l10n/ru.js"></script>
   <script>
     // ===================== ИСПОЛЬЗОВАНИЕ ССЫЛОК ИЗ КОНСТАНТ =====================
-    // Обновляем ссылки на основе констант
     document.querySelector('link[rel="icon"]').href = LINKS.FAVICON;
     document.querySelector('.logo img').src = LINKS.LOGO;
 
-    // Заполняем выпадающее меню проектами
-    function populateProjectsDropdown() {
-      const siteNameDropdown = document.getElementById('siteNameDropdown');
-      siteNameDropdown.innerHTML = '';
-      
-      // Добавляем проекты
-      for (const key in LINKS.PROJECTS) {
-        const project = LINKS.PROJECTS[key];
-        const link = document.createElement('a');
-        link.href = project.URL;
-        link.className = 'dropdown-button';
-        link.innerHTML = `<span>${project.NAME}</span>`;
-        siteNameDropdown.appendChild(link);
+    // ===================== СИСТЕМА АВТОРИЗАЦИИ =====================
+    
+    const API_KEY = LINKS.API_KEY;
+    const SPREADSHEET_ID = LINKS.SPREADSHEET_ID;
+    const CURRENT_SITE = LINKS.CURRENT_SITE;
+    
+    let currentUser = null;
+    
+    const loadingScreen = document.getElementById('loadingScreen');
+    const actionLoader = document.getElementById('actionLoader');
+
+    function showLoader(show) {
+      loadingScreen.style.display = show ? 'flex' : 'none';
+    }
+
+    function showActionLoader(show) {
+      if (show) {
+        actionLoader.classList.add('active');
+      } else {
+        actionLoader.classList.remove('active');
       }
     }
 
-    // Заполняем меню ссылками
-    function populateMenuLinks() {
-      const dropdownMenu = document.getElementById('dropdownMenu');
-      dropdownMenu.innerHTML = '';
-      
-      // Добавляем ссылки из меню
-      LINKS.MENU_LINKS.forEach(link => {
-        const menuItem = document.createElement('a');
-        menuItem.href = link.URL;
-        menuItem.innerHTML = `
-          <span class="icon-space"><i class="${link.ICON}"></i></span>${link.NAME}
-        `;
-        dropdownMenu.appendChild(menuItem);
+    function toggleUserDropdown() {
+      const menu = document.getElementById("userDropdown");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function loadSheetsAPI() {
+      return new Promise((resolve, reject) => {
+        gapi.load('client', {
+          callback: resolve,
+          onerror: () => reject('Ошибка загрузки Google API'),
+          timeout: 10000,
+          ontimeout: () => reject('Таймаут загрузки Google API')
+        });
       });
     }
 
-    // ===================== ОСНОВНОЙ КОД =====================
-    
-    // Принудительное использование HTTPS
-    (function() {
-      if (window.location.protocol === 'http:' && !window.location.hostname.includes('localhost')) {
-        window.location.href = 'https:' + window.location.href.substring(5);
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
+          '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return {};
       }
-    })();
+    }
 
+    function handleCredentialResponse(response) {
+      showLoader(true);
+      try {
+        const payload = parseJwt(response.credential);
+        currentUser = {
+          email: payload.email.toLowerCase().trim(),
+          name: payload.name,
+          picture: payload.picture
+        };
+        updateUserAvatar(currentUser);
+        initAndCheckEmail();
+      } catch (e) {
+        showLoader(false);
+        alert('Ошибка аутентификации');
+      }
+    }
+
+    function updateUserAvatar(user) {
+      const avatarContainer = document.getElementById('userAvatar');
+      avatarContainer.innerHTML = user?.picture 
+        ? `<img src="${user.picture}" alt="Avatar">` 
+        : '<i class="fas fa-user"></i>';
+    }
+
+    async function initAndCheckEmail() {
+      try {
+        await loadSheetsAPI();
+        await gapi.client.init({
+          apiKey: API_KEY,
+          discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+        });
+        await checkEmailInSheet(currentUser.email);
+      } catch (error) {
+        showLoader(false);
+        alert('Ошибка инициализации Google API: ' + error);
+      }
+    }
+
+    async function checkEmailInSheet(email) {
+      try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: '1!A:Z',
+        });
+        
+        const rows = response.result.values || [];
+        let hasAccess = false;
+        
+        for (let i = 0; i < rows.length; i++) {
+          if (!rows[i]?.[0]) continue;
+          if (rows[i][0].toLowerCase().trim() === email) {
+            for (let j = 1; j < rows[i].length; j++) {
+              const siteUrl = rows[i][j]?.trim().split('?')[0].split('#')[0] || '';
+              if (siteUrl === CURRENT_SITE || siteUrl.includes('SMB-BB')) {
+                hasAccess = true;
+                break;
+              }
+            }
+            break;
+          }
+        }
+        
+        if (hasAccess) {
+          loginUser(currentUser);
+        } else {
+          // Показываем alert с сообщением об ошибке, но НЕ скрываем анимацию загрузки
+          alert('Доступ запрещен');
+          // НЕ вызываем showLoader(false) - анимация остается
+        }
+      } catch (error) {
+        showLoader(false);
+        alert('Ошибка доступа к таблице');
+      }
+    }
+
+    function loginUser(payload) {
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('app-content').style.display = 'block';
+      
+      localStorage.setItem('userLoggedIn', 'true');
+      localStorage.setItem('userEmail', payload.email.toLowerCase());
+      localStorage.setItem('userName', payload.name);
+      localStorage.setItem('userPic', payload.picture);
+      
+      loadSheetData().finally(() => {
+        setTimeout(() => {
+          loadingScreen.classList.add('fade-out');
+        }, 500);
+      });
+    }
+
+    function signOut() {
+      localStorage.clear();
+      sessionStorage.clear();
+      location.reload();
+    }
+
+    document.addEventListener('click', function(e) {
+      const userDropdown = document.getElementById("userDropdown");
+      const userAvatar = document.getElementById("userAvatar");
+      
+      if (userDropdown.style.display === 'block' && !userAvatar.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.style.display = 'none';
+      }
+    });
+
+    // ===================== ОСТАЛЬНОЙ КОД =====================
+    
     const GAS_URL = LINKS.GAS_URL;
-    const allowedEmails = LINKS.ALLOWED_EMAILS;
-
     let fullData = [];
     let filteredData = [];
     let isFiltered = false;
@@ -1088,31 +1290,44 @@ BLOCKBUSTER
     let currentFilterDate = '';
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Заполняем меню
-      populateProjectsDropdown();
-      populateMenuLinks();
+      const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+      const email = localStorage.getItem('userEmail');
       
-      checkAuth();
-      
-      if (window.location.hash) {
-        processAuthResponse();
+      if (isLoggedIn && email) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('app-content').style.display = 'block';
+        
+        currentUser = {
+          email: email,
+          name: localStorage.getItem('userName'),
+          picture: localStorage.getItem('userPic')
+        };
+        
+        updateUserAvatar(currentUser);
+        showLoader(true);
+        
+        loadSheetsAPI()
+          .then(() => gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+          }))
+          .then(() => checkEmailInSheet(email))
+          .catch(error => {
+            showLoader(false);
+            alert('Ошибка восстановления сессии');
+            signOut();
+          });
+      } else {
+        document.getElementById('login').style.display = 'block';
+        setTimeout(() => {
+          loadingScreen.classList.add('fade-out');
+        }, 500);
       }
       
       document.addEventListener('click', function(e) {
-        const siteNameDropdown = document.getElementById('siteNameDropdown');
-        const dropdownMenu = document.getElementById('dropdownMenu');
         const dateFilterContainer = document.getElementById('date-filter-container');
         const openTasksCard = document.getElementById('openTasksCard');
         
-        if (!e.target.closest('.site-name') && siteNameDropdown.style.display === 'block') {
-          siteNameDropdown.style.display = 'none';
-        }
-        
-        if (!e.target.closest('.menu-button') && dropdownMenu.style.display === 'flex') {
-          dropdownMenu.style.display = 'none';
-        }
-        
-        // Закрываем фильтр дат при клике вне его области
         if (!e.target.closest('#openTasksCard') && 
             !e.target.closest('#date-filter-container') && 
             dateFilterContainer.classList.contains('show')) {
@@ -1120,95 +1335,10 @@ BLOCKBUSTER
         }
       });
       
-      // Инициализируем календарь
       initDatePicker();
       
-      // Обработчик для кнопки сброса фильтра
       document.getElementById('clear-filter-btn').addEventListener('click', clearDateFilter);
     });
-
-    function checkAuth() {
-      const userEmail = localStorage.getItem('userEmail');
-      if (userEmail && allowedEmails.includes(userEmail)) {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('app-content').style.display = 'block';
-        document.getElementById('ratingButton').style.display = 'flex';
-        document.getElementById('openTasksCard').style.display = 'flex';
-        loadSheetData();
-      } else {
-        document.getElementById('login').style.display = 'flex';
-      }
-    }
-
-    function googleAuth() {
-      const clientId = LINKS.GOOGLE_CLIENT_ID;
-      const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
-      const scope = encodeURIComponent('email profile');
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
-      
-      window.open(authUrl, 'GoogleAuth', 'width=500,height=600');
-    }
-
-    function processAuthResponse() {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const accessToken = params.get('access_token');
-      
-      if (accessToken) {
-        showLoader();
-        
-        fetch('https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + accessToken)
-          .then(response => response.json())
-          .then(data => {
-            if (data.email && allowedEmails.includes(data.email)) {
-              localStorage.setItem('userEmail', data.email);
-              window.location.href = window.location.origin + window.location.pathname;
-            } else {
-              alert('Доступ запрещен для: ' + data.email);
-              localStorage.removeItem('userEmail');
-            }
-          })
-          .catch(error => {
-            console.error('Ошибка получения данных:', error);
-            alert('Ошибка авторизации');
-          })
-          .finally(() => {
-            hideLoader();
-          });
-      }
-    }
-
-    function toggleSiteNameDropdown() {
-      const dropdown = document.getElementById("siteNameDropdown");
-      dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
-      
-      const menu = document.getElementById("dropdownMenu");
-      if (menu.style.display === "flex") {
-        menu.style.display = "none";
-      }
-      
-      event.stopPropagation();
-    }
-
-    function toggleDropdown() {
-      const menu = document.getElementById("dropdownMenu");
-      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
-      
-      const dropdown = document.getElementById("siteNameDropdown");
-      if (dropdown.style.display === "block") {
-        dropdown.style.display = "none";
-      }
-      
-      event.stopPropagation();
-    }
-
-    function showLoader() {
-      document.getElementById("loader").style.display = "flex";
-    }
-
-    function hideLoader() {
-      document.getElementById("loader").style.display = "none";
-    }
 
     function toggleRating() {
       const ratingButton = document.getElementById('ratingButton');
@@ -1240,7 +1370,6 @@ BLOCKBUSTER
       } else {
         openTasksCard.classList.remove('expanded');
         dateFilterContainer.classList.remove('show');
-        // При закрытии сбрасываем фильтр
         if (isDateFilterActive) {
           clearDateFilter();
         }
@@ -1254,7 +1383,6 @@ BLOCKBUSTER
         datePicker.destroy();
       }
       
-      // Инициализируем календарь
       datePicker = flatpickr(dateInput, {
         locale: "ru",
         dateFormat: "d.m.Y",
@@ -1269,7 +1397,6 @@ BLOCKBUSTER
         }
       });
       
-      // Очищаем поле ввода
       dateInput.value = '';
     }
 
@@ -1279,39 +1406,30 @@ BLOCKBUSTER
         return;
       }
       
-      // Активируем фильтр по дате
       isDateFilterActive = true;
       currentFilterDate = date;
       
-      // Считаем выполненные задачи за эту дату
       const completedTasksCount = countCompletedTasksByDate(date);
       
-      // Обновляем карточку с задачами
       updateTaskSummaryCard(date, completedTasksCount);
       
-      // Фильтруем данные: показываем только выполненные задачи за выбранную дату
       filteredData = fullData.filter(row => {
-        // row[4] - дата выполнения, row[5] - исполнитель
         return row[4] === date && row[5] && row[5].trim() !== '';
       });
       
-      // Сортируем отфильтрованные данные по дате выполнения (новые сверху)
       filteredData.sort((a, b) => {
         const dateA = parseDate(a[4]);
         const dateB = parseDate(b[4]);
         return dateB - dateA;
       });
       
-      // Устанавливаем флаг фильтрации
       isFiltered = true;
       currentFilterType = 'date';
       currentFilterValue = date;
       
-      // Показываем отфильтрованные данные
       currentPage = 1;
       renderFilteredPage(currentPage);
       
-      // Показываем кнопку "Показать все задачи"
       document.getElementById('showAllButton').style.display = 'block';
     }
 
@@ -1340,16 +1458,13 @@ BLOCKBUSTER
       isDateFilterActive = false;
       currentFilterDate = '';
       
-      // Сбрасываем поле ввода календаря
       const dateInput = document.getElementById('date-filter-input');
       if (dateInput) {
         dateInput.value = '';
       }
       
-      // Восстанавливаем карточку с открытыми задачами
       updateOpenTaskCard(fullData);
       
-      // Сбрасываем фильтр
       showAllTasks();
     }
 
@@ -1365,13 +1480,11 @@ BLOCKBUSTER
     }
 
     async function loadSheetData() {
-      showLoader();
       try {
         const response = await fetch(`${GAS_URL}?action=getData`);
         if (!response.ok) throw new Error('Network response was not ok');
         fullData = await response.json();
         
-        // Сортируем данные: сначала открытые задачи, затем закрытые
         fullData.sort((a, b) => {
           const aIsOpen = !a[5];
           const bIsOpen = !b[5];
@@ -1391,8 +1504,6 @@ BLOCKBUSTER
       } catch (e) {
         document.getElementById("tableBody").innerHTML = "<tr><td colspan='6'>Ошибка загрузки данных</td></tr>";
         console.error(e);
-      } finally {
-        hideLoader();
       }
     }
 
@@ -1404,7 +1515,6 @@ BLOCKBUSTER
       const currentMonth = currentDate.getMonth();
       const currentYear = currentDate.getFullYear();
       
-      // Определяем предыдущий месяц
       let prevMonth = currentMonth - 1;
       let prevYear = currentYear;
       if (prevMonth < 0) {
@@ -1417,12 +1527,9 @@ BLOCKBUSTER
         'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
       ];
       
-      // Статистика для текущего месяца
       const currentMonthStats = {};
-      // Статистика для предыдущего месяца
       const previousMonthStats = {};
       
-      // Обрабатываем все данные
       data.forEach(row => {
         if (row[4] && row[4].trim() !== '') {
           try {
@@ -1435,11 +1542,9 @@ BLOCKBUSTER
               const mechanic = row[5];
               
               if (mechanic && (mechanic === 'МЕХАНИК(1)' || mechanic === 'МЕХАНИК(2)')) {
-                // Текущий месяц
                 if (month === currentMonth && year === currentYear) {
                   currentMonthStats[mechanic] = (currentMonthStats[mechanic] || 0) + 1;
                 }
-                // Предыдущий месяц
                 if (month === prevMonth && year === prevYear) {
                   previousMonthStats[mechanic] = (previousMonthStats[mechanic] || 0) + 1;
                 }
@@ -1451,7 +1556,6 @@ BLOCKBUSTER
         }
       });
       
-      // ОБНОВЛЯЕМ РЕЙТИНГ ТЕКУЩЕГО МЕСЯЦА
       const currentMonthArray = Object.entries(currentMonthStats).map(([name, count]) => ({
         name,
         count
@@ -1486,7 +1590,6 @@ BLOCKBUSTER
         ratingContent.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;">Нет данных за ${monthNames[currentMonth]}</div>`;
       }
       
-      // ОБНОВЛЯЕМ ПОБЕДИТЕЛЯ ПРЕДЫДУЩЕГО МЕСЯЦА
       const previousMonthArray = Object.entries(previousMonthStats).map(([name, count]) => ({
         name,
         count
@@ -1511,7 +1614,8 @@ BLOCKBUSTER
     }
 
     async function updateSheet(rowNumber, doneByValue) {
-      showLoader();
+      // Показываем точно такую же анимацию, как при входе
+      showActionLoader(true);
       try {
         const params = new URLSearchParams({
           action: 'update',
@@ -1525,7 +1629,6 @@ BLOCKBUSTER
         const index = fullData.findIndex(row => row[0] === rowNumber);
         if (index !== -1) fullData[index] = updatedRow;
 
-        // После обновления снова сортируем данные
         fullData.sort((a, b) => {
           const aIsOpen = !a[5];
           const bIsOpen = !b[5];
@@ -1535,7 +1638,6 @@ BLOCKBUSTER
           return 0;
         });
 
-        // Обновляем отфильтрованные данные, если они активны
         if (isFiltered) {
           if (currentFilterType === 'machine') {
             filteredData = fullData.filter(row => 
@@ -1567,7 +1669,8 @@ BLOCKBUSTER
         console.error(e);
         return Promise.reject(e);
       } finally {
-        hideLoader();
+        // Скрываем анимацию после завершения
+        showActionLoader(false);
       }
     }
 
@@ -1584,12 +1687,10 @@ BLOCKBUSTER
       const pageData = isFiltered ? filteredData.slice(start, end) : fullData.slice(start, end);
 
       pageData.forEach((row, index) => {
-        // Создаем контейнер для карточки
         const cardContainer = document.createElement("div");
         cardContainer.className = "card-container";
         cardContainer.id = `card-container-${row[0]}`;
         
-        // Создаем кнопки фильтрации
         const filterButtons = document.createElement("div");
         filterButtons.className = "card-filter-buttons";
         filterButtons.id = `filter-buttons-${row[0]}`;
@@ -1602,7 +1703,6 @@ BLOCKBUSTER
           </button>
         `;
         
-        // Создаем карточку (строку таблицы)
         const tr = document.createElement("tr");
         tr.id = `card-${row[0]}`;
         const schemaLink = row[2]
@@ -1640,20 +1740,16 @@ BLOCKBUSTER
             </div>
           </td>`;
         
-        // Собираем все вместе
         cardContainer.appendChild(tr);
         cardContainer.appendChild(filterButtons);
         
-        // Добавляем обработчик клика на карточку
         tr.addEventListener('click', function(e) {
-          // Не обрабатываем клик по кнопкам или селектам
-          if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.closest('button')) {
+          if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.closest('button') || e.target.closest('.schema-button')) {
             return;
           }
           
           const rowId = row[0];
           
-          // Если кликаем на уже выбранную карточку - скрываем кнопки и снимаем выделение
           if (selectedRowId === rowId) {
             hideCardButtons(rowId);
             selectedRowId = null;
@@ -1662,69 +1758,55 @@ BLOCKBUSTER
             return;
           }
           
-          // Скрываем кнопки у предыдущей выбранной карточки
           if (selectedRowId) {
             hideCardButtons(selectedRowId);
             const prevCard = document.getElementById(`card-${selectedRowId}`);
             if (prevCard) prevCard.classList.remove('selected');
           }
           
-          // Сохраняем данные выбранной строки
           selectedRowData = row;
           selectedRowId = rowId;
           
-          // Показываем кнопки у текущей карточки
           showCardButtons(rowId);
           
-          // Выделяем карточку
           tr.classList.add('selected');
         });
         
-        // Добавляем обработчик клика на кнопку "Открыть"
         const openButton = tr.querySelector('.schema-button');
         if (openButton) {
           openButton.addEventListener('click', function(e) {
             const rowId = row[0];
             
-            // Если кликаем на уже выбранную карточку - скрываем кнопки и снимаем выделение
             if (selectedRowId === rowId) {
               hideCardButtons(rowId);
               selectedRowId = null;
               selectedRowData = null;
               tr.classList.remove('selected');
               
-              // Открываем ссылку в новой вкладке
               window.open(this.href, '_blank');
               e.preventDefault();
               return;
             }
             
-            // Скрываем кнопки у предыдущей выбранной карточки
             if (selectedRowId) {
               hideCardButtons(selectedRowId);
               const prevCard = document.getElementById(`card-${selectedRowId}`);
               if (prevCard) prevCard.classList.remove('selected');
             }
             
-            // Сохраняем данные выбранной строки
             selectedRowData = row;
             selectedRowId = rowId;
             
-            // Показываем кнопки у текущей карточки
             showCardButtons(rowId);
             
-            // Выделяем карточку
             tr.classList.add('selected');
             
-            // Открываем ссылку в новой вкладке
             window.open(this.href, '_blank');
             
-            // Отменяем стандартное поведение, чтобы не открывать ссылку дважды
             e.preventDefault();
           });
         }
         
-        // Добавляем карточку в таблицу
         tableBody.appendChild(cardContainer);
       });
 
@@ -1734,12 +1816,10 @@ BLOCKBUSTER
       if (isFiltered) {
         document.getElementById("prevBtn").disabled = currentPage === 1;
         document.getElementById("nextBtn").disabled = currentPage * rowsPerPage >= filteredData.length;
-        // Показываем кнопку "Показать все задачи"
         document.getElementById('showAllButton').style.display = 'block';
       } else {
         document.getElementById("prevBtn").disabled = currentPage === 1;
         document.getElementById("nextBtn").disabled = currentPage * rowsPerPage >= fullData.length;
-        // Скрываем кнопку "Показать все задачи"
         document.getElementById('showAllButton').style.display = 'none';
       }
     }
@@ -1748,6 +1828,7 @@ BLOCKBUSTER
       const filterButtons = document.getElementById(`filter-buttons-${rowId}`);
       if (filterButtons) {
         filterButtons.style.display = 'flex';
+        filterButtons.classList.add('visible');
       }
     }
 
@@ -1755,6 +1836,7 @@ BLOCKBUSTER
       const filterButtons = document.getElementById(`filter-buttons-${rowId}`);
       if (filterButtons) {
         filterButtons.style.display = 'none';
+        filterButtons.classList.remove('visible');
       }
     }
 
@@ -1771,75 +1853,17 @@ BLOCKBUSTER
 
     function validateAndSend(rowNumber) {
       const gSelect = document.getElementById(`g_${rowNumber}`);
-      const btn = document.getElementById(`btn_${rowNumber}`);
 
       if (!gSelect || !gSelect.value) {
         alert("Заполните все формы!");
         return;
       }
 
-      // Сохраняем текущую позицию прокрутки
       const scrollPosition = window.scrollY || document.documentElement.scrollTop;
       
       updateSheet(rowNumber, gSelect.value).then(() => {
-        // Восстанавливаем позицию прокрутки после обновления
         window.scrollTo(0, scrollPosition);
       });
-    }
-
-    function updateSingleRow(rowNumber, rowData) {
-      const rows = document.getElementById("tableBody").getElementsByTagName("tr");
-      
-      for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const btn = row.querySelector(`button[id="btn_${rowNumber}"]`);
-        
-        if (btn) {
-          const schemaLink = rowData[2]
-            ? `<a href="${rowData[2]}" target="_blank" class="schema-button">
-                 <i class="fas fa-file-alt"></i>Открыть
-               </a>`
-            : "";
-
-          row.cells[0].innerHTML = rowData[2] ? `
-            <a href="${rowData[2]}" target="_blank" class="schema-button">
-              <i class="fas fa-file-alt"></i>Открыть
-            </a>` : "Нет схемы";
-          
-          row.cells[1].textContent = rowData[1];
-          row.cells[2].textContent = rowData[3];
-          row.cells[3].textContent = rowData[4];
-          
-          if (rowData[5]) {
-            row.cells[4].innerHTML = rowData[5];
-            row.cells[4].id = "";
-          } else {
-            row.cells[4].innerHTML = `
-              <select id="g_${rowData[0]}">
-                <option value="" selected disabled></option>
-                <option value="МЕХАНИК(1)">МЕХАНИК(1)</option>
-                <option value="МЕХАНИК(2)">МЕХАНИК(2)</option>
-              </select>`;
-            row.cells[4].id = `gText_${rowData[0]}`;
-          }
-          
-          const buttonsRow = row.cells[5].querySelector('.buttons-row');
-          buttonsRow.innerHTML = `
-            ${schemaLink}
-            ${rowData[5]
-              ? `<span class="sent-text"><i class="fas fa-check-circle"></i>Отправлено</span>`
-              : `<button id="btn_${rowData[0]}" onclick="validateAndSend(${rowData[0]});">
-                   <i class="fas fa-paper-plane"></i>Отправить
-                 </button>`}
-          `;
-          
-          break;
-        }
-      }
-      
-      applyHighlight();
-      updateOpenTaskCard(fullData);
-      updateMechanicsRating(fullData);
     }
 
     function startColumnSearch(columnIndex) {
@@ -1942,7 +1966,6 @@ BLOCKBUSTER
       }
     }
 
-    // Функции для работы с фильтрацией из карточек
     function filterByMachineFromCard(rowNumber) {
       const row = fullData.find(r => r[0] === rowNumber);
       if (!row) return;
@@ -1951,7 +1974,6 @@ BLOCKBUSTER
       currentFilterType = 'machine';
       currentFilterValue = machineName;
       
-      // Фильтруем только невыполненные задачи с этой машиной
       filteredData = fullData.filter(row => 
         row[1] === machineName && !row[5]
       );
@@ -1960,7 +1982,6 @@ BLOCKBUSTER
       currentPage = 1;
       renderFilteredPage(currentPage);
       
-      // Показываем кнопку "Показать все задачи"
       document.getElementById('showAllButton').style.display = 'block';
     }
 
@@ -1972,7 +1993,6 @@ BLOCKBUSTER
       currentFilterType = 'task';
       currentFilterValue = taskName;
       
-      // Фильтруем только невыполненные задачи с этой задачей (по всем машинам)
       filteredData = fullData.filter(row => 
         row[2] === taskName && !row[5]
       );
@@ -1981,7 +2001,6 @@ BLOCKBUSTER
       currentPage = 1;
       renderFilteredPage(currentPage);
       
-      // Показываем кнопку "Показать все задачи"
       document.getElementById('showAllButton').style.display = 'block';
     }
 
@@ -1992,10 +2011,8 @@ BLOCKBUSTER
       currentPage = 1;
       renderPage(currentPage);
       
-      // Скрываем кнопку "Показать все задачи"
       document.getElementById('showAllButton').style.display = 'none';
       
-      // Снимаем выделение с выбранной карточки
       if (selectedRowId) {
         hideCardButtons(selectedRowId);
         const selectedCard = document.getElementById(`card-${selectedRowId}`);
@@ -2006,7 +2023,6 @@ BLOCKBUSTER
         selectedRowData = null;
       }
       
-      // Сбрасываем фильтр даты если он был активен
       if (isDateFilterActive) {
         clearDateFilter();
       }
